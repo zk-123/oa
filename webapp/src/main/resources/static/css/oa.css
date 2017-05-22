@@ -1,0 +1,19 @@
+body{
+    font-family: 微软雅黑;
+}
+.menu-add {
+    margin: 111px 0px;
+}
+.tip {
+    display: none;
+    margin: 10px 0;
+    border: 1px solid #f77c7c;
+    background-color: rgba(251, 78, 78, 0.62);
+    padding: 5px 11px;
+}
+.top-navbar{
+    margin-bottom: 0px !important;
+}
+.menu-add-one {
+    margin: 15px 0;
+}
