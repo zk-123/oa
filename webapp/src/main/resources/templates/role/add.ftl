@@ -1,6 +1,6 @@
 <#include "../include/common-macro.ftl">
 <#include "../include/menu-tree-marco.ftl">
-<@main "编辑目录">
+<@main "添加角色">
 <div class="main-container" id="main-container">
     <div class="main-container-inner">
         <a class="menu-toggler" id="menu-toggler" href="#">
@@ -54,7 +54,7 @@
                         <a href="${ctx}">首页</a>
                     </li>
                     <li>
-                        <a href="#">编辑目录</a>
+                        <a href="#">添加角色</a>
                     </li>
                 </ul>
 
@@ -67,40 +67,18 @@
                             <div class="panel panel-primary menu-add">
                                 <div class="panel-heading">
                                     <div class="panel-title">
-                                        编辑目录
+                                        添加角色
                                     </div>
                                 </div>
                                 <div class="panel-body">
-                                    <form id="menu-modify">
+                                    <form id="menu-new">
                                         <div class="menu-add-one">
-                                            目录位置下：
-                                            <select name="parentId" class="form-control">
-                                                <#if modifyMenu.parentId=="#root">
-                                                    <option value="#root" selected>根目录</option>
-                                                <#else>
-                                                    <option value="#root">根目录</option>
-                                                </#if>
-                                                <#list menuList as menu>
-                                                    <#if modifyMenu.parentId == menu.menuId>
-                                                        <option value="${menu.menuId}" selected>${menu.menuName}</option>
-                                                    <#else >
-                                                        <option value="${menu.menuId}">${menu.menuName}</option>
-                                                    </#if>
-                                                </#list>
-                                            </select>
-                                        </div>
-                                        <input type="hidden" name="menuId" value="${modifyMenu.menuId}">
-                                        <div class="menu-add-one">
-                                            目录名称：
-                                            <input type="text" placeholder="目录名称" value="${modifyMenu.menuName!""}" name="menuName" class="form-control">
+                                            角色名称：
+                                            <input type="text" name="roleName" placeholder="角色名称" class="form-control" required>
                                         </div>
                                         <div class="menu-add-one">
-                                            目录顺序(数字越小，优先级越高)
-                                            <input type="text" placeholder="请输入数字" value="${modifyMenu.menuSort!""}" name="menuSort" class="form-control">
-                                        </div>
-                                        <div class="menu-add-one">
-                                            目录描述
-                                            <input type="text" placeholder="简短的词语来描述该目录" value="${modifyMenu.menuDescribe!""}" name="menuDescribe" class="form-control">
+                                            角色说明：
+                                            <input type="text" placeholder="角色说明" name="roleDescribe" class="form-control" required>
                                         </div>
                                         <div class="tip"></div>
                                         <button class="btn btn-primary menu-add-submit">提交</button>
@@ -120,12 +98,12 @@
 <script>
     $('.menu-add-submit').click(function () {
         $.ajax({
-            url:"${ctx}/menu/modify",
-            data:$("#menu-modify").serialize(),
+            url:"${ctx}/role/add",
+            data:$("#menu-new").serialize(),
             type:"POST",
             success:function (data) {
                 showTip(data);
-                window.location.reload();
+                setTimeout("window.location.reload();",1500);
             },
             error:function (xr) {
                 showTip(xr.responseText);

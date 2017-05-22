@@ -18,9 +18,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 /**
  * @Author zk
@@ -153,11 +151,9 @@ public class MenuService {
      *
      * @return
      */
-    public MenuTree menuTreeAllList(){
+    public MenuTree menuTreeAll(){
         MenuTree rootMenuTree = new MenuTree();
-
-        List<Menu> sumMenuList= menuRepository.findAll();
-
+        List<Menu> sumMenuList= menuRepository.findAll(new Sort(Sort.Direction.ASC,"menuSort"));
         buildMenuTree(sumMenuList,rootMenuTree,true);
         return rootMenuTree;
     }
@@ -190,13 +186,13 @@ public class MenuService {
         else
             menuTreeList = getMenuListByParent(sumMenuList,menuTree.getMenu().getMenuId());
 
-        if(!menuTreeList.isEmpty()){
+        if(!menuTreeList.isEmpty()){ //从第一个子列表递归实现
             for(MenuTree mt : menuTreeList){ //构建其子目录
                 buildMenuTree(sumMenuList,mt,false);
             }
         }
+        menuTree.setSpread(false);//默认不展开
         menuTree.setMenuTreeList(menuTreeList);
-
     }
 
     /** 根据parent获取子menuList

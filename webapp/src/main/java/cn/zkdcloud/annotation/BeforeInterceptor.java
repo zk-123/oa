@@ -9,5 +9,5 @@ import javax.servlet.http.HttpServletResponse;
  * @Email 2117251154@qq.com
  */
 public interface BeforeInterceptor {
-    boolean doOperator(HttpServletRequest request, HttpServletResponse response);
+    void doOperator(HttpServletRequest request, HttpServletResponse response);
 }

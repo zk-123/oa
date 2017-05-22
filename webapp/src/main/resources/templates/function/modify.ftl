@@ -84,14 +84,14 @@
                                                 </#list>
                                             </select>
                                         </div>
-                                        <input type="hidden" name="menuId" value="${modifyFunction.functionId}">
+                                        <input type="hidden" name="functionId" value="${modifyFunction.functionId}">
                                         <div class="menu-add-one">
                                             功能名称：
                                             <input type="text" placeholder="功能名称" value="${modifyFunction.functionName!""}" name="functionName" class="form-control" required>
                                         </div>
                                         <div class="menu-add-one">
                                             功能Url
-                                            <input type="text" placeholder="请输入url" value="${modifyFunction.functionSort!""}" name="functionSort" class="form-control" required>
+                                            <input type="text" placeholder="请输入url" value="${modifyFunction.functionUrl!""}" name="functionUrl" class="form-control" required>
                                         </div>
                                         <div class="menu-add-one">
                                             功能顺序(数字越小，优先级越高)
@@ -119,12 +119,12 @@
 <script>
     $('.menu-add-submit').click(function () {
         $.ajax({
-            url:"${ctx}/menu/modify",
+            url:"${ctx}/function/modify",
             data:$("#menu-modify").serialize(),
             type:"POST",
             success:function (data) {
                 showTip(data);
-                window.location.reload();
+                setTimeout("window.location.reload()",1500);
             },
             error:function (xr) {
                 showTip(xr.responseText);

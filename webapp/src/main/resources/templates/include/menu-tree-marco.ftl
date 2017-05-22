@@ -1,7 +1,7 @@
 <#macro menuTreeLoop mtlist>
     <#list mtlist as mt>
 
-        <li>
+        <li class="<#if mt.spread>open</#if>">
             <a href="#" class="dropdown-toggle">
                 <div class="menu-name">
                     <i class="icon-file-alt"></i>
@@ -10,7 +10,7 @@
                     <b class="arrow icon-angle-down"></b>
                 </div>
             </a>
-            <ul class="submenu">
+            <ul class="submenu" <#if mt.spread>style="display: block"</#if>>
                 <#if (mt.menuTreeList?size>0)>
                     <@menuTreeLoop mt.menuTreeList></@menuTreeLoop>
                 </#if>

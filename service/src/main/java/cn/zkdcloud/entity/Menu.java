@@ -34,6 +34,7 @@ public class Menu {
     private String parentId;
 
     @OneToMany(cascade = CascadeType.ALL,mappedBy = "menuId")
+    @OrderBy("functionSort asc")
     private Set<Function> functionSet = new HashSet<Function>();
 
     public String getMenuId() {

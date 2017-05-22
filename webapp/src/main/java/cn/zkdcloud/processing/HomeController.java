@@ -29,9 +29,6 @@ public class HomeController extends ContentController{
      */
     @RequestMapping("/")
     public String index(ModelMap map) {
-        MenuTree menuTree= menuService.menuTreeAllList();
-        map.put("menuTree",menuTree);
-
         return "index";
     }
 

@@ -14,7 +14,7 @@ import javax.servlet.http.HttpServletResponse;
  */
 public class InputFunctionInterceptor implements BeforeInterceptor{
     @Override
-    public boolean doOperator(HttpServletRequest request, HttpServletResponse response) {
+    public void doOperator(HttpServletRequest request, HttpServletResponse response) {
         String functionName = request.getParameter("functionName");
         String functionUrl = request.getParameter("functionUrl");
         String functionSort = request.getParameter("functionSort");
@@ -28,6 +28,5 @@ public class InputFunctionInterceptor implements BeforeInterceptor{
             throw new TipException("功能顺序限定为整数");
         if(StrUtil.isBlank(functionDescribe) || StrUtil.notDigitAndLetterAndChinese(functionDescribe))
             throw new TipException("功能描述输入限定（字母，数字，汉字）");
-        return false;
     }
 }

@@ -16,7 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.Date;
 
 
-/**
+/** 下次做我会把他们抽象成接口
  * @Author zk
  * @Date 2017/5/17.
  * @Email 2117251154@qq.com
@@ -41,7 +41,7 @@ public class UserService {
         OperatorLog log = new OperatorLog();
         log.setOperatorContent(content);
         log.setOpreratorCreateDate(new Date());
-        log.setOperatorType("role");
+        log.setOperatorType("人员");
         operatorLogRepository.save(log);
 
         logger.info(content);
@@ -74,6 +74,32 @@ public class UserService {
             throw new TipException("不存在该用户");
         if(!user.getPassword().equals(Md5Util.toMD5(password)))
            throw new TipException("密码错误");
+        return user;
+    }
+
+    /** 删除指定人员
+     *
+     * @param uid
+     */
+    public void removeUser(String uid){
+        try {
+            userRespository.delete(uid);
+        } catch (Exception e) {
+            throw new TipException("无此人");
+        }
+    }
+
+    /** 获取指定人员
+     *
+     * @param uid
+     */
+    public User getUserByUid(String uid){
+        if(uid == null)
+            throw new TipException("无此人");
+
+        User user = userRespository.findOne(uid);
+        if(user == null)
+            throw new TipException("无此人");
         return user;
     }
 }

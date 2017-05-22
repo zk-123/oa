@@ -33,8 +33,6 @@ public class MenuController extends ContentController{
      */
     @RequestMapping("/listAll")
     public String listAll(ModelMap modelMap){
-        MenuTree menuTree= menuService.menuTreeAllList();
-        modelMap.put("menuTree",menuTree);
         return "index";
     }
 
@@ -45,7 +43,6 @@ public class MenuController extends ContentController{
      */
     @RequestMapping(value = "/add",method = RequestMethod.GET)
     public String addMenu(ModelMap modelMap){
-        modelMap.put("menuTree",menuService.menuTreeAllList());
         modelMap.put("menuList",menuService.getMenuList());
         return "menu/add";
     }
@@ -76,7 +73,6 @@ public class MenuController extends ContentController{
         Integer sumPage = menuPage.getTotalPages();
         modelMap.put("sumPage",sumPage);
         modelMap.put("curPage",curPage);
-        modelMap.put("menuTree",menuService.menuTreeAllList());
         modelMap.put("menuPage",menuPage);
         return "menu/list";
     }
@@ -93,7 +89,6 @@ public class MenuController extends ContentController{
 
         modelMap.put("modifyMenu",menu);
         modelMap.put("menuList",menuService.getMenuList());
-        modelMap.put("menuTree",menuService.menuTreeAllList());
         return "menu/modify";
     }
 

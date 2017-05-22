@@ -12,7 +12,7 @@ import javax.servlet.http.HttpServletResponse;
  */
 public class InputMenuInterceptor implements BeforeInterceptor{
     @Override
-    public boolean doOperator(HttpServletRequest request, HttpServletResponse response) {
+    public void doOperator(HttpServletRequest request, HttpServletResponse response) {
         String menuName = request.getParameter("menuName");
         String menuSort = request.getParameter("menuSort");
         String menuDescribe = request.getParameter("menuDescribe");
@@ -23,6 +23,5 @@ public class InputMenuInterceptor implements BeforeInterceptor{
             throw new TipException("描述限定(数字,字母，汉字)");
         if(StrUtil.isBlank(menuSort) || !StrUtil.isIntegerDigit(menuSort))
             throw new TipException("目录顺序请输入整数");
-        return true;
     }
 }

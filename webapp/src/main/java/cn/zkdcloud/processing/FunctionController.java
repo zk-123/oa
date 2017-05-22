@@ -37,7 +37,6 @@ public class FunctionController extends ContentController{
      */
     @RequestMapping(value = "/add",method = RequestMethod.GET)
     public String addFunction(ModelMap modelMap){
-        modelMap.put("menuTree",menuService.menuTreeAllList());
         modelMap.put("menuList",menuService.getMenuList());
         return "function/add";
     }
@@ -70,7 +69,6 @@ public class FunctionController extends ContentController{
         modelMap.put("functionPage",functionPage);
         modelMap.put("sumPage",sumPage);
         modelMap.put("curPage",curPage);
-        modelMap.put("menuTree",menuService.menuTreeAllList());
         return "function/list";
     }
 
@@ -85,7 +83,6 @@ public class FunctionController extends ContentController{
 
         modelMap.put("modifyFunction",modifyFunction);
         modelMap.put("menuList",menuService.getMenuList());
-        modelMap.put("menuTree",menuService.menuTreeAllList());
         return "function/modify";
     }
 
@@ -97,7 +94,7 @@ public class FunctionController extends ContentController{
     @RequestMapping(value = "/modify",method = RequestMethod.POST)
     @ResponseBody
     public String modifyFunction(){
-        functionService.modifyFunction(getReqString("funcitonId"),getReqString("functionName"),getReqString("functionDescribe"),
+        functionService.modifyFunction(getReqString("functionId"),getReqString("functionName"),getReqString("functionDescribe"),
                 Integer.parseInt(getReqString("functionSort")),getReqString("functionUrl"),getReqString("menuId"),"haha");
         return OPERSTOR_SUCCESS;
     }
