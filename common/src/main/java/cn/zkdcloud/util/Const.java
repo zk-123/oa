@@ -6,5 +6,6 @@ package cn.zkdcloud.util;
  * @Email 2117251154@qq.com
  */
 public class Const {
-    public static String MENU_ROOT = "#root";
+    public static String MENU_ROOT = "#root"; //跟目录
+    public static String USER_LOGIN = "USERLOGIN";
 }

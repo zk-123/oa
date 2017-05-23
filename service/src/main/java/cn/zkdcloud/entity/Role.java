@@ -4,7 +4,6 @@ import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
 import java.util.Date;
-import java.util.List;
 import java.util.Set;
 
 /**
@@ -27,10 +26,32 @@ public class Role {
     private String roleDescribe;
 
     @Column
+    private Integer rolePowerSize;
+
+    @Column
     private Date roleDate;
 
     @OneToMany(mappedBy = "roleId")
     private Set<User> userList;
+
+    @OneToMany(cascade = CascadeType.ALL,mappedBy = "roleId")
+    private Set<RolePower> rolePowers;
+
+    public Set<RolePower> getRolePowers() {
+        return rolePowers;
+    }
+
+    public void setRolePowers(Set<RolePower> rolePowers) {
+        this.rolePowers = rolePowers;
+    }
+
+    public Integer getRolePowerSize() {
+        return rolePowerSize;
+    }
+
+    public void setRolePowerSize(Integer rolePowerSize) {
+        this.rolePowerSize = rolePowerSize;
+    }
 
     public String getRoleId() {
         return roleId;

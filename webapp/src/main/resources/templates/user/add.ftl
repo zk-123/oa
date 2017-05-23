@@ -1,6 +1,6 @@
 <#include "../include/common-macro.ftl">
 <#include "../include/menu-tree-marco.ftl">
-<@main "添加角色">
+<@main "添加人员">
 <div class="main-container" id="main-container">
     <div class="main-container-inner">
         <a class="menu-toggler" id="menu-toggler" href="#">
@@ -54,7 +54,7 @@
                         <a href="${ctx}">首页</a>
                     </li>
                     <li>
-                        <a href="#">添加角色</a>
+                        <a href="#">添加人员</a>
                     </li>
                 </ul>
 
@@ -67,24 +67,26 @@
                             <div class="panel panel-primary menu-add">
                                 <div class="panel-heading">
                                     <div class="panel-title">
-                                        添加角色
+                                        添加人员
                                     </div>
                                 </div>
                                 <div class="panel-body">
                                     <form id="menu-new">
                                         <div class="menu-add-one">
-                                            角色名称：
-                                            <input type="text" name="roleName" placeholder="角色名称" class="form-control" required>
+                                            所属角色
+                                            <select name="roleId">
+                                                <#list roleList as role>
+                                                    <option value="${role.roleId}" class="form-control">${role.roleName}</option>
+                                                </#list>
+                                            </select>
                                         </div>
-
                                         <div class="menu-add-one">
-                                            角色权利（填写整数，数字越小，权利越大，谨慎填写）：
-                                            <input type="text" name="rolePowerSize" placeholder="角色权利" class="form-control" required>
+                                            账号
+                                            <input type="text" name="username" placeholder="人员账号" class="form-control" required>
                                         </div>
-
                                         <div class="menu-add-one">
-                                            角色说明：
-                                            <input type="text" placeholder="角色说明" name="roleDescribe" class="form-control" required>
+                                            密码：
+                                            <input type="password" name="password" placeholder="人员密码" class="form-control" required>
                                         </div>
                                         <div class="tip"></div>
                                         <button class="btn btn-primary menu-add-submit">提交</button>
@@ -104,7 +106,7 @@
 <script>
     $('.menu-add-submit').click(function () {
         $.ajax({
-            url:"${ctx}/role/add",
+            url:"${ctx}/user/add",
             data:$("#menu-new").serialize(),
             type:"POST",
             success:function (data) {

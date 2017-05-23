@@ -2,6 +2,8 @@ package cn.zkdcloud.interceptors;
 import cn.zkdcloud.annotation.BeforeInterceptor;
 import cn.zkdcloud.exception.TipException;
 import cn.zkdcloud.util.StrUtil;
+import org.springframework.stereotype.Component;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -10,6 +12,7 @@ import javax.servlet.http.HttpServletResponse;
  * @Date 2017/5/21.
  * @Email 2117251154@qq.com
  */
+@Component
 public class InputMenuInterceptor implements BeforeInterceptor{
     @Override
     public void doOperator(HttpServletRequest request, HttpServletResponse response) {

@@ -1,10 +1,15 @@
 package cn.zkdcloud.processing;
 
 import cn.zkdcloud.annotation.Before;
+import cn.zkdcloud.entity.Role;
 import cn.zkdcloud.entity.User;
 import cn.zkdcloud.interceptors.InputBaseUserInterceptor;
+import cn.zkdcloud.interceptors.LoginCheckInterceptor;
+import cn.zkdcloud.interceptors.PowerCheckInterceptor;
 import cn.zkdcloud.service.MenuService;
+import cn.zkdcloud.service.RoleService;
 import cn.zkdcloud.service.UserService;
+import cn.zkdcloud.util.Const;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -24,7 +29,7 @@ public class UserController extends ContentController{
     private static Logger logger = Logger.getLogger(UserController.class);
 
     @Autowired
-    MenuService menuService;
+    RoleService roleService;
 
     @Autowired
     UserService userService;
@@ -33,8 +38,11 @@ public class UserController extends ContentController{
      *
      * @return
      */
+    @Before(LoginCheckInterceptor.class)
     @RequestMapping(value = "/add",method = RequestMethod.GET)
-    public String addUserPage(){
+    public String addUserPage(ModelMap modelMap){
+        Role role = roleService.getRole(getLoginUser().getRoleId());
+        modelMap.put("roleList",roleService.listRole(role.getRolePowerSize()));
         return "user/add";
     }
 
@@ -42,11 +50,11 @@ public class UserController extends ContentController{
      *
      * @return
      */
-    @Before(InputBaseUserInterceptor.class)
+    @Before({InputBaseUserInterceptor.class, PowerCheckInterceptor.class})
     @RequestMapping(value = "/add",method = RequestMethod.POST)
     @ResponseBody
     public String addUser(){
-        userService.addUser(getReqString("username"),getReqString("password"),"haha");
+        userService.addUser(getReqString("username"),getReqString("password"),getReqString("roleId"),getLoginUserName());
         return OPERSTOR_SUCCESS;
     }
 
@@ -82,7 +90,7 @@ public class UserController extends ContentController{
     @ResponseBody
     public String login(){
         User user = userService.loginUser(getReqString("username"),getReqString("password"));
-        session.setAttribute(USER_LOGIN,user);
+        session.setAttribute(Const.USER_LOGIN,user);
         return "登录成功";
     }
 

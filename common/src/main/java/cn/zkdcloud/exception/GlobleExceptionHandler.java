@@ -50,11 +50,15 @@ public class GlobleExceptionHandler {
     @ExceptionHandler(ErrorPageException.class)
     String errorPageException(HttpServletRequest request, HttpServletResponse response,ErrorPageException ex){
         JSONObject errorJson = JSONObject.fromObject(ex.getMessage());
+        String page = errorJson.getString("page");
+        if(page != null) return page;
+
         String code = errorJson.getString("code");
         String tip = errorJson.getString("tip");
-        logger.info("错误页面,"+"code:"+code+",tip:"+tip);
         request.setAttribute("code",code);
         request.setAttribute("tip",tip);
+        logger.info("错误页面,"+"code:"+code+",tip:"+tip);
+
         return "error/error";
     }
 }

@@ -1,10 +1,11 @@
 package cn.zkdcloud.service;
 
-import cn.zkdcloud.entity.Function;
-import cn.zkdcloud.entity.OperatorLog;
+import cn.zkdcloud.entity.*;
 import cn.zkdcloud.exception.TipException;
 import cn.zkdcloud.repository.FunctionRepository;
 import cn.zkdcloud.repository.OperatorLogRepository;
+import cn.zkdcloud.repository.RolePowerRepository;
+import cn.zkdcloud.repository.RoleRepository;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -34,6 +35,12 @@ public class FunctionService {
     @Autowired
     FunctionRepository functionRepository;
 
+    @Autowired
+    RoleRepository roleRepository;
+
+    @Autowired
+    RolePowerRepository rolePowerRepository;
+
     /** 记录操作
      *
      * @param content
@@ -54,11 +61,10 @@ public class FunctionService {
      * @param functionName
      * @param functionUrl
      * @param functionDescribe
-     * @param username
      * @param functionSort
      */
-    public void addFunction(String menuId,String functionName,String functionUrl,
-                            String functionDescribe,String username,Integer functionSort){
+    public void addFunction(String menuId, String functionName, String functionUrl,
+                            String functionDescribe, Integer functionSort, User user){
         try {
             Function function = new Function();
             function.setMenuId(menuId);
@@ -67,13 +73,30 @@ public class FunctionService {
             function.setFunctionDescribe(functionDescribe);
             function.setFunctionSort(functionSort);
 
-            functionRepository.save(function);
-            recordLog(username+"增加功能"+functionName);
+            Function new_function = functionRepository.save(function);
+
+            Role role = roleRepository.findOne(user.getRoleId()); // 为更高权限的角色分配此功能
+            disGreeterRoleFunction(new_function.getFunctionId(),role.getRolePowerSize());
+
+            recordLog(user.getUsername()+"增加功能"+functionName);
         } catch (Exception e) {
             throw new TipException("输入项有误");
         }
     }
 
+    /** 为更高权限分配该功能
+     *
+     * @param rolePowerSize
+     */
+    public void disGreeterRoleFunction(String functionId,Integer rolePowerSize){
+        List<Role> roleList = roleRepository.morePowerThanThis(rolePowerSize);
+        for(Role role : roleList){
+            RolePower rolePower = new RolePower();
+            rolePower.setRoleId(role.getRoleId());
+            rolePower.setFunctionId(functionId);
+            rolePowerRepository.save(rolePower);
+        }
+    }
     /** 移除功能
      *
      * @param functionId
@@ -91,9 +114,9 @@ public class FunctionService {
      *
      * @return
      */
-    public List<Function> functionAllList(){
+    public List<Function> functionList(User user){
         Sort sort = new Sort(Sort.Direction.ASC,"functionSort");
-        return functionRepository.findAll();
+        return functionRepository.findByRoleRoleId(user.getRoleId(),sort);
     }
 
     /**带分页的功能列表
@@ -102,10 +125,10 @@ public class FunctionService {
      * @param pageSize
      * @return
      */
-    public Page<Function> functionPage(Integer page,Integer pageSize){
-        Sort sort = new Sort(Sort.Direction.ASC,"functionSort");
-        Pageable pageable = new PageRequest(page-1,pageSize);
-        return functionRepository.findAll(pageable);
+    public Page<Function> functionPage(Integer page,Integer pageSize,User user){
+
+        Pageable pageable = new PageRequest(page-1,pageSize,new Sort(Sort.Direction.ASC,"functionSort"));
+        return functionRepository.findByRoleRoleId(user.getRoleId(),pageable);
     }
 
     /** 修改功能
@@ -146,5 +169,17 @@ public class FunctionService {
         if(function == null)
             throw new TipException("无此功能");
         return function;
+    }
+
+    /** 根据功能的url查找
+     *
+     * @param url
+     * @return
+     */
+    public Function findFunctionByUrl(String url){
+        List<Function> functions = functionRepository.findByFunctionUrl(url);
+        if(functions == null || functions.isEmpty())
+            throw new TipException("无此功能");
+        return functions.get(0);
     }
 }

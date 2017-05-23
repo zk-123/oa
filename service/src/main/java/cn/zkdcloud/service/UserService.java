@@ -53,10 +53,11 @@ public class UserService {
      * @param password
      * @param operatorUserName
      */
-    public void addUser(String username,String password,String operatorUserName){
+    public void addUser(String username,String password,String roleId,String operatorUserName){
         User user = new User();
         user.setUsername(username);
         user.setPassword(Md5Util.toMD5(password));
+        user.setRoleId(roleId);
         if(userRespository.save(user) == null)
             throw new TipException("添加失败");
         recordLog(operatorUserName+"添加用户："+username);

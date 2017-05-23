@@ -4,6 +4,7 @@ import cn.zkdcloud.annotation.BeforeInterceptor;
 import cn.zkdcloud.config.InterceptorHandler;
 import cn.zkdcloud.exception.TipException;
 import cn.zkdcloud.util.StrUtil;
+import org.springframework.stereotype.Component;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -13,6 +14,7 @@ import javax.servlet.http.HttpServletResponse;
  * @Date 2017/5/22.
  * @Email 2117251154@qq.com
  */
+@Component
 public class InputRoleInterceptor  implements BeforeInterceptor{
     @Override
     public void doOperator(HttpServletRequest request, HttpServletResponse response) {

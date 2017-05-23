@@ -8,6 +8,7 @@ import cn.zkdcloud.entity.MenuTree;
 import cn.zkdcloud.service.MenuService;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerInterceptor;
@@ -33,6 +34,10 @@ public class InterceptorHandler implements HandlerInterceptor{
     @Autowired
     MenuService menuService;
 
+    @Autowired
+    ApplicationContext applicationContext;
+
+
     @Override
     public boolean preHandle(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, Object o) throws Exception {
         HandlerMethod handlerMethod = (HandlerMethod) o;
@@ -41,11 +46,10 @@ public class InterceptorHandler implements HandlerInterceptor{
         if(before != null){
             Class<? extends BeforeInterceptor>[] beforeList = before.value();
             for(Class<? extends BeforeInterceptor> oneClazz : beforeList){
-                BeforeInterceptor oneEntity= oneClazz.newInstance();
+                BeforeInterceptor oneEntity= applicationContext.getBean(oneClazz);
                 oneEntity.doOperator(httpServletRequest,httpServletResponse); //调用方法
             }
         }
-
         return true;
     }
 

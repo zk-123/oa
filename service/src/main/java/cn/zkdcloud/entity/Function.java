@@ -1,8 +1,12 @@
 package cn.zkdcloud.entity;
 
-import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.*;
 
 import javax.persistence.*;
+import javax.persistence.CascadeType;
+import javax.persistence.Entity;
+import javax.persistence.OrderBy;
+import java.util.Set;
 
 /** 功能项
  * @Author zk
@@ -29,6 +33,17 @@ public class Function {
 
     @Column
     private String functionDescribe;
+
+    @OneToMany(cascade = CascadeType.ALL,mappedBy = "functionId")
+    private Set<RolePower> rolePowerSet;
+
+    public Set<RolePower> getRolePowerSet() {
+        return rolePowerSet;
+    }
+
+    public void setRolePowerSet(Set<RolePower> rolePowerSet) {
+        this.rolePowerSet = rolePowerSet;
+    }
 
     public String getFunctionName() {
         return functionName;

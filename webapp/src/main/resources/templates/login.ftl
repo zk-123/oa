@@ -21,8 +21,8 @@
                 </div>
                 <div class="panel-body">
                     <form id="user">
-                        用户名：<input type="text" placeholder="用户名" class="form-control">
-                        密码：<input type="password" placeholder="密码" class="form-control">
+                        用户名：<input type="text" name="username" placeholder="用户名" class="form-control">
+                        密码：<input type="password" name="password" placeholder="密码" class="form-control">
                         <div class="tip"></div>
                         <button class="btn btn-primary user-login-btn" style="margin: 20px 0 0 0">登录</button>
                     </form>
@@ -37,7 +37,7 @@
 <script>
     $('.user-login-btn').click(function () {
         $.ajax({
-            url:"${ctx}/role/login",
+            url:"${ctx}/user/login",
             data:$('#user').serialize(),
             type:"POST",
             success:function (data) {

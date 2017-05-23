@@ -41,9 +41,10 @@ public class RoleController extends ContentController{
     @RequestMapping(value = "/add",method = RequestMethod.POST)
     @ResponseBody
     public String addRole(){
-        roleService.addRole(getReqString("roleName"),getReqString("roleDescribe"),"haha");
+        roleService.addRole(getReqString("roleName"),getReqString("roleDescribe"),Integer.parseInt(getReqString("rolePowerSize")),"haha");
         return OPERSTOR_SUCCESS;
     }
+
     @RequestMapping(value = "/modify",method = RequestMethod.GET)
     public String modifyPage(ModelMap modelMap){
         modelMap.put("modifyRole",roleService.getRole(getReqString("roleId")));

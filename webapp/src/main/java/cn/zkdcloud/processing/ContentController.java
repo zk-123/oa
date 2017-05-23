@@ -1,6 +1,7 @@
 package cn.zkdcloud.processing;
 
 import cn.zkdcloud.entity.User;
+import cn.zkdcloud.util.Const;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
 
@@ -15,7 +16,6 @@ import javax.servlet.http.HttpSession;
  */
 @Controller
 public class ContentController {
-    protected static String USER_LOGIN = "USERLOGIN";
     protected static String OPERSTOR_SUCCESS = "操作成功";
 
     protected HttpServletRequest request;
@@ -57,7 +57,7 @@ public class ContentController {
      * @return
      */
     public String getLoginUserName(){
-        User user = (User) session.getAttribute(USER_LOGIN);
+        User user = (User) session.getAttribute(Const.USER_LOGIN);
         return user.getUsername();
     }
 
@@ -66,7 +66,7 @@ public class ContentController {
      * @return
      */
     public User getLoginUser(){
-        return  (User) session.getAttribute(USER_LOGIN);
+        return  (User) session.getAttribute(Const.USER_LOGIN);
     }
 
     /** 判断是否登录
@@ -74,7 +74,7 @@ public class ContentController {
      * @return
      */
     public boolean isLogin(){
-        return session.getAttribute(USER_LOGIN) == null ? true :false;
+        return session.getAttribute(Const.USER_LOGIN) == null ? true :false;
     }
 
 }
