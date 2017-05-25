@@ -1,12 +1,10 @@
 package cn.zkdcloud.service;
 
-import cn.zkdcloud.entity.Function;
-import cn.zkdcloud.entity.Menu;
-import cn.zkdcloud.entity.MenuTree;
-import cn.zkdcloud.entity.OperatorLog;
+import cn.zkdcloud.entity.*;
 import cn.zkdcloud.exception.TipException;
 import cn.zkdcloud.repository.FunctionRepository;
 import cn.zkdcloud.repository.MenuRepository;
+import cn.zkdcloud.repository.MenuRoleRepository;
 import cn.zkdcloud.repository.OperatorLogRepository;
 import cn.zkdcloud.util.Const;
 import org.apache.log4j.Logger;
@@ -40,6 +38,11 @@ public class MenuService {
     @Autowired
     private FunctionRepository functionRepository;
 
+    @Autowired
+    private RoleService roleService;
+
+    @Autowired
+    private MenuRoleRepository menuRoleRepository;
 
     /** 记录操作
      *
@@ -55,16 +58,6 @@ public class MenuService {
         logger.info(content);
     }
 
-    /** 添加根目录
-     *
-     * @param menu
-     */
-    public void addRootMenu(Menu menu){
-        menu.setParentId(Const.MENU_ROOT);
-        if(menuRepository.save(menu) == null)
-            throw new TipException("创建一级目录失败");
-
-    }
 
     /** 添加目录
      *
@@ -73,19 +66,27 @@ public class MenuService {
      * @param parent_id
      * @param sort
      */
-    public void addMenu(String menu_name,String menu_describe,String parent_id,Integer sort,String username){
+    public void addMenu(String menu_name,String menu_describe,String parent_id,Integer sort,User user){
         Menu menu = new Menu();
         menu.setMenuName(menu_name);
         menu.setMenuDescribe(menu_describe);
         menu.setParentId(parent_id);
         menu.setMenuSort(sort);
 
-        if(parent_id == null)
-            addRootMenu(menu);
-        else if(menuRepository.save(menu) == null)
+        Menu new_menu = menuRepository.save(menu);
+        if( new_menu == null)
             throw new TipException("创建目录失败");
 
-        recordLog(username+"创建目录"+menu_name);
+        Role role = roleService.getRole(user.getRoleId()); //为权限比自己高或等的人来分配权限
+        List<Role> roleList = roleService.listRoleGreaterOrEqual(role.getRolePowerSize());
+        for(Role r : roleList){
+            MenuRole menuRole = new MenuRole();
+            menuRole.setRoleId(r.getRoleId());
+            menuRole.setMenuId(new_menu.getMenuId());
+            menuRoleRepository.save(menuRole);
+        }
+
+        recordLog(user.getUsername()+"创建目录"+menu_name);
     }
 
     /** 根据Id获取menu
@@ -140,37 +141,52 @@ public class MenuService {
     public void removeMenu(String menu_id,String username){
         Menu menu= menuRepository.getOne(menu_id);
         if(menu == null)
-            throw new TipException("输入有误");
+            throw new TipException("操作有误");
         menuRepository.delete(menu_id);
-        menuRepository.removeByParentId(menu_id); //删除其子目录
+        menuRepository.deleteByParentId(menu_id); //删除其子目录
 
         recordLog(username+"删除目录"+ menu.getMenuName());
     }
 
-    /** 全部菜单列表
+    /** 根据角色筛选目录列表
      *
      * @return
      */
-    public MenuTree menuTreeAll(){
+    public MenuTree menuTree(User user){
         MenuTree rootMenuTree = new MenuTree();
-        List<Menu> sumMenuList= menuRepository.findAll(new Sort(Sort.Direction.ASC,"menuSort"));
+        List<Menu> sumMenuList= new ArrayList<>();
+        sumMenuList.addAll(roleService.getRole(user.getRoleId()).getMenuSet());
+
         buildMenuTree(sumMenuList,rootMenuTree,true);
         return rootMenuTree;
     }
 
-    /** 目录列表
+    /** 目录列表分页
      *
      * @return
      */
-    public Page<Menu> getMenuList(Integer page, Integer pageSize){
+    public Page<Menu> getMenuList(Integer page, Integer pageSize,User user){
         Sort sort = new Sort(Sort.Direction.ASC,"menuSort");
         Pageable pageable = new PageRequest(page-1,pageSize,sort);
-        return menuRepository.findAll(pageable);
+
+        List<String> menuIds = new ArrayList<>(); //暂时用这个笨方法
+        for(Menu menu : roleService.getRole(user.getRoleId()).getMenuSet()){
+            menuIds.add(menu.getMenuId());
+        }
+
+        return menuRepository.findByMenuIdIn(menuIds,pageable);
     }
 
-    public List<Menu> getMenuList(){
-        Sort sort = new Sort(Sort.Direction.ASC,"menuSort");
-        return menuRepository.findAll(sort);
+    /** 目录列表List
+     *
+     * @param user
+     * @return
+     */
+    public List<Menu> getMenuList(User user){
+        List<Menu> menuList = new ArrayList<>();
+        menuList.addAll(roleService.getRole(user.getRoleId()).getMenuSet());
+        Collections.sort(menuList,new MenuComparatorByMenuSort());
+        return menuList;
     }
 
     /** menuTree结构 第一个menu是空也为#ROOT 遍历从它的子list开始遍历
@@ -219,6 +235,17 @@ public class MenuService {
      * @return
      */
     public List<Function> getFunctionListByMenuId(String menu_id){
-        return functionRepository.findByMenuId(menu_id);
+        return null;
+    }
+
+    /** 根据排序序号菜单排序
+     *
+     */
+    class MenuComparatorByMenuSort implements Comparator<Menu>{
+
+        @Override
+        public int compare(Menu o1, Menu o2) {
+            return o1.getMenuSort() > o2.getMenuSort() ? -1 : 1;
+        }
     }
 }

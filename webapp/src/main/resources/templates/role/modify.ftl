@@ -76,6 +76,10 @@
                                             角色名称：
                                             <input type="text" placeholder="角色名称" name="roleName" value="${modifyRole.roleName}" class="form-control">
                                         </div>
+                                        <div class="menu-add-one">
+                                            角色权利（填写整数，数字越小，权利越大，谨慎填写 您当前权限数字 ${myPowerSize}）：
+                                            <input type="text" name="rolePowerSize" placeholder="角色权利" value="${modifyRole.rolePowerSize}" class="form-control" required>
+                                        </div>
                                         <input type="hidden" name="roleId" value="${modifyRole.roleId}">
                                         <div class="menu-add-one">
                                             角色描述：

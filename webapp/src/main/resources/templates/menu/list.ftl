@@ -104,11 +104,13 @@
                                                 </a>
                                             </li>
                                         </#if>
+                                        <#if (sumPage > 0) >
                                         <#list curPage..sumPage as index >
                                             <#if (curPage + 9 > index)>
                                                     <li <#if curPage == index> class="active" </#if>><a href="${ctx}/menu/list?p=${index}">${index}</a></li>
                                             </#if>
                                         </#list>
+                                        </#if>
                                         <#if (curPage + 9 <= sumPage)>
                                             <li>
                                                 <a href="#" aria-label="Next">

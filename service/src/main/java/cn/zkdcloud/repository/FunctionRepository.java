@@ -17,13 +17,10 @@ import java.util.List;
  */
 public interface FunctionRepository extends JpaRepository<Function,String>{
 
-    List<Function> findByMenuId(String menuId);
-
     List<Function> findByFunctionUrl(String url);
 
-    @Query("select f from Function f where f.functionId in (select rp.functionId from RolePower rp where rp.roleId = :roleId)")
-    Page<Function> findByRoleRoleId(@Param("roleId") String roleId, Pageable pageable);
+    Page<Function> findByFunctionIdIn(List<String> list, Pageable pageable);
 
-    @Query("select f from Function f where f.functionId in (select rp.functionId from RolePower rp where rp.roleId = :roleId)")
+    @Query("select f from Function f where f.functionId in (select rp.functionId from RoleFunction rp where rp.roleId = :roleId)")
     List<Function> findByRoleRoleId(@Param("roleId") String roleId,Sort sort);
 }

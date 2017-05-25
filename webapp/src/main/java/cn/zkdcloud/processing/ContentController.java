@@ -34,13 +34,22 @@ public class ContentController {
         this.session = request.getSession();
     }
 
-    /** 获取request总的字符串
+    /** 获取request中的字符串
      *
      * @param str
      * @return
      */
     public String getReqString(String str){
         return request.getParameter(str);
+    }
+
+    /** 获取request中字符串数组
+     *
+     * @param str
+     * @return
+     */
+    public String[] getReqStringValues(String str){
+        return request.getParameterValues(str);
     }
 
     /** 获取session中的对象

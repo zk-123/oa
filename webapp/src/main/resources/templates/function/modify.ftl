@@ -72,18 +72,6 @@
                                 </div>
                                 <div class="panel-body">
                                     <form id="menu-modify">
-                                        <div class="menu-add-one">
-                                            目录位置下：
-                                            <select name="menuId" class="form-control">
-                                                <#list menuList as menu>
-                                                    <#if modifyFunction.menuId == menu.menuId>
-                                                        <option value="${menu.menuId}" selected>${menu.menuName}</option>
-                                                    <#else >
-                                                        <option value="${menu.menuId}">${menu.menuName}</option>
-                                                    </#if>
-                                                </#list>
-                                            </select>
-                                        </div>
                                         <input type="hidden" name="functionId" value="${modifyFunction.functionId}">
                                         <div class="menu-add-one">
                                             功能名称：

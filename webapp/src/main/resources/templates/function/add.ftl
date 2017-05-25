@@ -73,14 +73,6 @@
                                 <div class="panel-body">
                                     <form id="function-new">
                                         <div class="menu-add-one">
-                                            目录位置下：
-                                            <select name="menuId" class="form-control">
-                                                <#list menuList as menu>
-                                                    <option value="${menu.menuId}">${menu.menuName}</option>
-                                                </#list>
-                                            </select>
-                                        </div>
-                                        <div class="menu-add-one">
                                             功能名称：
                                             <input type="text" placeholder="目录名称" name="functionName" class="form-control">
                                         </div>

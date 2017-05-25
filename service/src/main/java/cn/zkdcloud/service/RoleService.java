@@ -1,9 +1,10 @@
 package cn.zkdcloud.service;
 
-import cn.zkdcloud.entity.OperatorLog;
-import cn.zkdcloud.entity.Role;
+import cn.zkdcloud.entity.*;
 import cn.zkdcloud.exception.TipException;
+import cn.zkdcloud.repository.MenuRoleRepository;
 import cn.zkdcloud.repository.OperatorLogRepository;
+import cn.zkdcloud.repository.RoleFunctionRepository;
 import cn.zkdcloud.repository.RoleRepository;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +15,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -32,6 +34,12 @@ public class RoleService {
 
     @Autowired
     private RoleRepository roleRepository;
+
+    @Autowired
+    private RoleFunctionRepository roleFunctionRepository;
+
+    @Autowired
+    private MenuRoleRepository menuRoleRepository;
 
     /**
      * 记录操作
@@ -99,7 +107,7 @@ public class RoleService {
      * @param roleName
      * @param roleDescribe
      */
-    public void modifyRole(String roleId, String roleName, String roleDescribe, String username) {
+    public void modifyRole(String roleId, String roleName, String roleDescribe,Integer rolePowerSize, String username) {
         Role oldRole = getRole(roleId);
 
         Role role = new Role();
@@ -107,6 +115,7 @@ public class RoleService {
         role.setRoleName(roleName);
         role.setRoleDescribe(roleDescribe);
         role.setRoleDate(new Date());
+        role.setRolePowerSize(rolePowerSize);
         roleRepository.save(role);
 
         recordLog(username + "修改角色信息: old: " + oldRole + ", new:" + role);
@@ -117,18 +126,72 @@ public class RoleService {
      *
      * @return
      */
-    public Page<Role> listAllRolePage(Integer page, Integer pageSize) {
+    public Page<Role> listRolesPage(Integer page, Integer pageSize,Integer rolePowerSize) {
         Pageable pageable = new PageRequest(page - 1, pageSize, new Sort(Sort.Direction.ASC, "roleDate"));
-        return roleRepository.findAll(pageable);
+        return roleRepository.findByRolePowerSizeGreaterThan(rolePowerSize,pageable);
     }
 
     /**
-     * 角色列表
+     * 获取权限小于自己的角色列表
      *
      * @return
      */
-    public List<Role> listRole(Integer rolePowerSize) {
+    public List<Role> listRoleLess(Integer rolePowerSize) {
         return roleRepository.findByRolePowerSizeGreaterThan(rolePowerSize);
+    }
+
+    /** 获取权限大于或自己的角色列表
+     *
+     * @param rolePowerSize
+     * @return
+     */
+    public List<Role> listRoleGreaterOrEqual(Integer rolePowerSize){
+        return roleRepository.listRoleGreaterOrEqual(rolePowerSize);
+    }
+    /** 为指定用户分配权限操作
+     *
+     * @param functionIds
+     * @param roleId
+     */
+    public void dispatcherRole(List<String> functionIds,List<String> menuIds,String roleId){
+
+        List<String> oldFunctionIds = new ArrayList<>();
+        List<String> oldMenuIds = new ArrayList<>();
+        Role role = roleRepository.getOne(roleId);
+
+        for(Function function : role.getFunctionSet())
+            oldFunctionIds.add(function.getFunctionId());
+        for(Menu menu : role.getMenuSet())
+            oldMenuIds.add(menu.getMenuId());
+
+        for(String functionId : oldFunctionIds){ //删除移除的功能
+            if(!functionIds.contains(functionId)){
+                roleFunctionRepository.deleteByRoleIdAndFunctionId(roleId,functionId);
+            }
+        }
+
+        for(String functionId : functionIds){  //增加新的功能
+            if(!oldFunctionIds.contains(functionId)){
+                RoleFunction roleFunction = new RoleFunction();
+                roleFunction.setFunctionId(functionId);
+                roleFunction.setRoleId(roleId);
+                roleFunctionRepository.save(roleFunction);
+            }
+        }
+
+        for(String menuId : oldMenuIds){ //删除移除的目录
+            if(!menuIds.contains(menuId))
+                menuRoleRepository.deleteByMenuIdAndRoleId(menuId,roleId);
+        }
+
+        for(String menuId : menuIds){   //增加新的目录
+            if(!oldMenuIds.contains(menuId)){
+                MenuRole menuRole = new MenuRole();
+                menuRole.setRoleId(roleId);
+                menuRole.setMenuId(menuId);
+                menuRoleRepository.save(menuRole);
+            }
+        }
     }
 
 }

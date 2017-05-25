@@ -1,6 +1,6 @@
 <#include "../include/common-macro.ftl">
 <#include "../include/menu-tree-marco.ftl">
-<@main "分配权限">
+<@main "分配功能">
 <div class="main-container" id="main-container">
     <div class="main-container-inner">
         <a class="menu-toggler" id="menu-toggler" href="#">
@@ -54,7 +54,7 @@
                         <a href="${ctx}">首页</a>
                     </li>
                     <li>
-                        <a href="#">分配权限</a>
+                        <a href="#">分配功能</a>
                     </li>
                 </ul>
 
@@ -62,29 +62,44 @@
 
             <div class="page-content">
                 <div class="row">
-
-                    <div class="col-md-12">
-                        <div class="panel panel-primary">
-                            <div class="panel-heading">
-                                <div class="panel-title">
-                                    正在为${role.roleName}分配权限
+                    <div class="col-xs-12">
+                        <div class="col-md-offset-1 col-md-10">
+                            <div class="panel panel-primary menu-add">
+                                <div class="panel-heading">
+                                    <div class="panel-title">
+                                        分配功能（将该功能分配到某目录下）
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="panel-body">
-                                <form>
-                                    <ul>
-                                        <#list functionList as function>
-                                            <li><input type="checkbox" checked value="${function.functionId}" name="functionIds">${function.functionName}</li>
-                                        </#list>
-                                    </ul>
-                                </form>
-                                <div class="tip"></div>
-                                <!--page-->
+                                <div class="panel-body">
+                                    <form id="function-new">
+                                        <div class="menu-add-one">
+                                            功能名称：
+                                            <select name="functionId" class="form-control">
+                                                <#if functionList??>
+                                                    <#list functionList as function>
+                                                        <option value="${function.functionId}">${function.functionName}</option>
+                                                    </#list>
+                                                </#if>
+                                            </select>
+                                        </div>
+                                        <div class="menu-add-one">
+                                            目录名称
+                                            <#if menuList??>
+                                                <select name="menuId" class="form-control">
+                                                    <#list menuList as menu>
+                                                        <option value="${menu.menuId}">${menu.menuName}</option>
+                                                    </#list>
+                                                </select>
+                                            </#if>
+                                        </div>
 
+                                        <div class="tip"></div>
+                                        <button class="btn btn-primary menu-add-submit">提交</button>
+                                    </form>
+                                </div>
                             </div>
                         </div>
                     </div>
-
                 </div>
             </div>
         </div>
@@ -94,21 +109,19 @@
 </@main>
 
 <script>
-    function deleteTip(data) {
-        if(window.confirm("确认删除该功能？")){
-            $.ajax({
-                url:"${ctx}/function/delete",
-                data:{"functionId":data},
-                async:false,
-                type:"POST",
-                success:function (data) {
-                    setTimeout("showTip(data);",1500);
-                    window.location.reload();
-                },
-                error:function (ex) {
-                    showTip(ex.responseText);
-                }
-            })
-        }
-    }
+    $('.menu-add-submit').click(function () {
+        $.ajax({
+            url:"${ctx}/function/dispatcher",
+            data:$("#function-new").serialize(),
+            type:"POST",
+            success:function (data) {
+                showTip(data);
+                setTimeout("window.location.reload()",1500);
+            },
+            error:function (xr) {
+                showTip(xr.responseText);
+            }
+        })
+        return false;
+    })
 </script>

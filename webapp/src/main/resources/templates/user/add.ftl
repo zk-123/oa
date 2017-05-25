@@ -74,9 +74,9 @@
                                     <form id="menu-new">
                                         <div class="menu-add-one">
                                             所属角色
-                                            <select name="roleId">
+                                            <select name="roleId" class="form-control">
                                                 <#list roleList as role>
-                                                    <option value="${role.roleId}" class="form-control">${role.roleName}</option>
+                                                    <option value="${role.roleId}" >${role.roleName}</option>
                                                 </#list>
                                             </select>
                                         </div>

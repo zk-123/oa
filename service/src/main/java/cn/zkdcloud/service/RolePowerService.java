@@ -1,7 +1,7 @@
 package cn.zkdcloud.service;
 
-import cn.zkdcloud.entity.RolePower;
-import cn.zkdcloud.repository.RolePowerRepository;
+import cn.zkdcloud.entity.RoleFunction;
+import cn.zkdcloud.repository.RoleFunctionRepository;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -21,7 +21,7 @@ public class RolePowerService {
     private static Logger logger = Logger.getLogger(RoleService.class);
 
     @Autowired
-    RolePowerRepository rolePowerRepository;
+    RoleFunctionRepository roleFunctionRepository;
 
     public void addRolePower(String roldId,String[] functionIds){
 
@@ -34,7 +34,7 @@ public class RolePowerService {
      * @return
      */
     public boolean findByRoleIdAndFunctionId(String roleId,String functionId){
-        List<RolePower> rolePowerList = rolePowerRepository.findByRoleIdAndFunctionId(roleId,functionId);
+        List<RoleFunction> rolePowerList = roleFunctionRepository.findByRoleIdAndFunctionId(roleId,functionId);
         if(rolePowerList == null || rolePowerList.isEmpty())
             return false;
         else

@@ -1,7 +1,9 @@
 package cn.zkdcloud.processing;
 
 
+import cn.zkdcloud.annotation.Before;
 import cn.zkdcloud.entity.MenuTree;
+import cn.zkdcloud.interceptors.LoginCheckInterceptor;
 import cn.zkdcloud.service.MenuService;
 import cn.zkdcloud.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +29,7 @@ public class HomeController extends ContentController{
      * @param map
      * @return
      */
+    @Before({LoginCheckInterceptor.class})
     @RequestMapping("/")
     public String index(ModelMap map) {
         return "index";

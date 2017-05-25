@@ -31,19 +31,17 @@ public class Role {
     @Column
     private Date roleDate;
 
-    @OneToMany(mappedBy = "roleId")
-    private Set<User> userList;
+    @ManyToMany(cascade = CascadeType.ALL)
+    @JoinTable(name = "RoleFunction",joinColumns = @JoinColumn(name = "roleId"), //该角色有哪些权限
+            inverseJoinColumns = @JoinColumn(name = "functionId"))
+    @OrderBy("functionSort asc ")
+    private Set<Function> functionSet;
 
-    @OneToMany(cascade = CascadeType.ALL,mappedBy = "roleId")
-    private Set<RolePower> rolePowers;
-
-    public Set<RolePower> getRolePowers() {
-        return rolePowers;
-    }
-
-    public void setRolePowers(Set<RolePower> rolePowers) {
-        this.rolePowers = rolePowers;
-    }
+    @ManyToMany(cascade = CascadeType.ALL)
+    @JoinTable(name = "MenuRole",joinColumns = @JoinColumn(name = "roleId"),
+    inverseJoinColumns = @JoinColumn(name = "menuId"))
+    @OrderBy("menuSort asc")
+    private Set<Menu> menuSet;
 
     public Integer getRolePowerSize() {
         return rolePowerSize;
@@ -85,12 +83,20 @@ public class Role {
         this.roleDescribe = roleDescribe;
     }
 
-    public Set<User> getUserList() {
-        return userList;
+    public Set<Function> getFunctionSet() {
+        return functionSet;
     }
 
-    public void setUserList(Set<User> userList) {
-        this.userList = userList;
+    public void setFunctionSet(Set<Function> functionSet) {
+        this.functionSet = functionSet;
+    }
+
+    public Set<Menu> getMenuSet() {
+        return menuSet;
+    }
+
+    public void setMenuSet(Set<Menu> menuSet) {
+        this.menuSet = menuSet;
     }
 
     @Override

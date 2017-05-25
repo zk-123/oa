@@ -17,3 +17,12 @@ body{
 .menu-add-one {
     margin: 15px 0;
 }
+ul.role-power-ul{
+    list-style: none;
+}
+
+ul.role-power-ul li{
+    border-bottom: 1px solid #ccc;
+    line-height: 30px;
+    font-size: 15px;
+}

@@ -9,7 +9,7 @@
     <link rel="stylesheet" href="/css/ace-rtl.min.css"/>
     <link rel="stylesheet" href="/css/ace-skins.min.css"/>
     <link href="/css/bootstrap.min.css" rel="stylesheet"/>
-    <link rel="stylesheet" href="/css/oa.css"/>
+    <link  href="/css/oa.css" rel="stylesheet"/>
 </head>
 
 <body>

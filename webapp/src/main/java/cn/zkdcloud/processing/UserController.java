@@ -1,8 +1,10 @@
 package cn.zkdcloud.processing;
 
 import cn.zkdcloud.annotation.Before;
+import cn.zkdcloud.entity.Function;
 import cn.zkdcloud.entity.Role;
 import cn.zkdcloud.entity.User;
+import cn.zkdcloud.interceptors.DispatcherPowerInterceptor;
 import cn.zkdcloud.interceptors.InputBaseUserInterceptor;
 import cn.zkdcloud.interceptors.LoginCheckInterceptor;
 import cn.zkdcloud.interceptors.PowerCheckInterceptor;
@@ -17,6 +19,9 @@ import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @Author zk
@@ -38,11 +43,11 @@ public class UserController extends ContentController{
      *
      * @return
      */
-    @Before(LoginCheckInterceptor.class)
+    @Before({LoginCheckInterceptor.class,PowerCheckInterceptor.class})
     @RequestMapping(value = "/add",method = RequestMethod.GET)
     public String addUserPage(ModelMap modelMap){
         Role role = roleService.getRole(getLoginUser().getRoleId());
-        modelMap.put("roleList",roleService.listRole(role.getRolePowerSize()));
+        modelMap.put("roleList",roleService.listRoleLess(role.getRolePowerSize())); //获取权限比自己小的角色列表
         return "user/add";
     }
 
@@ -93,5 +98,16 @@ public class UserController extends ContentController{
         session.setAttribute(Const.USER_LOGIN,user);
         return "登录成功";
     }
+
+    /**注销用户
+     *
+     * @return
+     */
+    @RequestMapping(value = "/off",method = RequestMethod.GET)
+    public String off(){
+        session.removeAttribute(Const.USER_LOGIN);
+        return "login";
+    }
+
 
 }

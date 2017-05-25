@@ -90,7 +90,7 @@
                                                 <td>${role.roleDate}</td>
                                                 <td><a target="_blank" href="${ctx}/role/modify?roleId=${role.roleId}">修改</a></td>
                                                 <td><a href="javascript:;" onclick="deleteTip('${role.roleId}')">删除</a></td>
-                                                <td><a target="_blank" href="${ctx}/function/dispatcher?roleId=${role.roleId}">分配权限</a></td>
+                                                <td><a target="_blank" href="${ctx}/role/dispatcher?roleId=${role.roleId}">分配权限</a></td>
                                             </tr>
                                         </#list>
                                     </#if>
@@ -106,11 +106,14 @@
                                                 </a>
                                             </li>
                                         </#if>
-                                        <#list curPage..sumPage as index >
-                                            <#if (curPage + 9 > index)>
+                                        <#if (sumPage > 0) >
+                                            <#list curPage..sumPage as index >
+                                                <#if (curPage + 9 > index)>
                                                     <li <#if curPage == index> class="active" </#if>><a href="${ctx}/role/list?p=${index}">${index}</a></li>
-                                            </#if>
-                                        </#list>
+                                                </#if>
+                                            </#list>
+                                        </#if>
+
                                         <#if (curPage + 9 <= sumPage)>
                                             <li>
                                                 <a href="#" aria-label="Next">

@@ -33,9 +33,30 @@ public class Menu {
     @Column
     private String parentId;
 
-    @OneToMany(cascade = CascadeType.ALL,mappedBy = "menuId")
+    @ManyToMany
+    @JoinTable(name = "MenuFunction",joinColumns = @JoinColumn(name = "menuId"), //该目录下有什么功能 级联目录
+    inverseJoinColumns = @JoinColumn(name = "functionId"))
     @OrderBy("functionSort asc")
-    private Set<Function> functionSet = new HashSet<Function>();
+    private Set<Function> functionSet;
+
+    @OneToMany(cascade = CascadeType.ALL,mappedBy = "menuId") //级联目录角色中间表
+    private Set<MenuRole> menuRoleSet;
+
+    public Set<MenuRole> getMenuRoleSet() {
+        return menuRoleSet;
+    }
+
+    public void setMenuRoleSet(Set<MenuRole> menuRoleSet) {
+        this.menuRoleSet = menuRoleSet;
+    }
+
+    public Set<Function> getFunctionSet() {
+        return functionSet;
+    }
+
+    public void setFunctionSet(Set<Function> functionSet) {
+        this.functionSet = functionSet;
+    }
 
     public String getMenuId() {
         return menuId;
@@ -77,11 +98,4 @@ public class Menu {
         this.parentId = parentId;
     }
 
-    public Set<Function> getFunctionSet() {
-        return functionSet;
-    }
-
-    public void setFunctionSet(Set<Function> functionSet) {
-        this.functionSet = functionSet;
-    }
 }

@@ -13,7 +13,7 @@ import javax.persistence.Id;
  * @Email 2117251154@qq.com
  */
 @Entity
-public class RolePower {
+public class RoleFunction {
 
     @Id
     @GeneratedValue(generator="idGenerator")

@@ -28,21 +28,30 @@ public class Function {
 
     @Column
     private Integer functionSort;
-    @Column
-    private String menuId;
 
     @Column
     private String functionDescribe;
 
-    @OneToMany(cascade = CascadeType.ALL,mappedBy = "functionId")
-    private Set<RolePower> rolePowerSet;
+    @OneToMany(cascade = CascadeType.ALL,mappedBy = "functionId") //级联
+    private  Set<MenuFunction> menuFunctionSet;
 
-    public Set<RolePower> getRolePowerSet() {
-        return rolePowerSet;
+    @OneToMany(cascade = CascadeType.ALL,mappedBy = "functionId")
+    private Set<RoleFunction> roleFunctionSet;
+
+    public Set<MenuFunction> getMenuFunctionSet() {
+        return menuFunctionSet;
     }
 
-    public void setRolePowerSet(Set<RolePower> rolePowerSet) {
-        this.rolePowerSet = rolePowerSet;
+    public void setMenuFunctionSet(Set<MenuFunction> menuFunctionSet) {
+        this.menuFunctionSet = menuFunctionSet;
+    }
+
+    public Set<RoleFunction> getRoleFunctionSet() {
+        return roleFunctionSet;
+    }
+
+    public void setRoleFunctionSet(Set<RoleFunction> roleFunctionSet) {
+        this.roleFunctionSet = roleFunctionSet;
     }
 
     public String getFunctionName() {
@@ -69,13 +78,6 @@ public class Function {
         this.functionSort = functionSort;
     }
 
-    public String getMenuId() {
-        return menuId;
-    }
-
-    public void setMenuId(String menuId) {
-        this.menuId = menuId;
-    }
 
     public String getFunctionDescribe() {
         return functionDescribe;
@@ -96,6 +98,6 @@ public class Function {
     @Override
     public  String toString(){
         return "functionId:" + functionId + ",functionName :" + functionName + ", functionSort : " +
-                functionSort + ",functionDescribe:" + functionDescribe + ", menuId : " + menuId;
+                functionSort + ",functionDescribe:" + functionDescribe ;
     }
 }

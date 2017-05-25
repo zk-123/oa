@@ -3,7 +3,8 @@ package cn.zkdcloud.processing;
 import cn.zkdcloud.annotation.Before;
 import cn.zkdcloud.entity.Function;
 import cn.zkdcloud.entity.Role;
-import cn.zkdcloud.entity.RolePower;
+import cn.zkdcloud.entity.RoleFunction;
+import cn.zkdcloud.interceptors.DispatcherPowerInterceptor;
 import cn.zkdcloud.interceptors.InputFunctionInterceptor;
 import cn.zkdcloud.interceptors.LoginCheckInterceptor;
 import cn.zkdcloud.interceptors.PowerCheckInterceptor;
@@ -52,7 +53,6 @@ public class FunctionController extends ContentController{
     @Before({LoginCheckInterceptor.class,PowerCheckInterceptor.class})
     @RequestMapping(value = "/add",method = RequestMethod.GET)
     public String addFunction(ModelMap modelMap){
-        modelMap.put("menuList",menuService.getMenuList());
         return "function/add";
     }
 
@@ -60,12 +60,36 @@ public class FunctionController extends ContentController{
      *
      * @return
      */
-    @Before({InputFunctionInterceptor.class, PowerCheckInterceptor.class})
+    @Before({LoginCheckInterceptor.class,InputFunctionInterceptor.class, PowerCheckInterceptor.class})
     @RequestMapping(value = "/add",method = RequestMethod.POST)
     @ResponseBody
     public String addFunction(){
-        functionService.addFunction(getReqString("menuId"),getReqString("functionName"),getReqString("functionUrl"),
+        functionService.addFunction(getReqString("functionName"),getReqString("functionUrl"),
                 getReqString("functionDescribe"), Integer.valueOf(getReqString("functionSort")),getLoginUser());
+        return OPERSTOR_SUCCESS;
+    }
+
+    /** 分配功能到指定目录下页面
+     *
+     * @return
+     */
+    @Before({LoginCheckInterceptor.class,PowerCheckInterceptor.class})
+    @RequestMapping(value = "/dispatcher",method = RequestMethod.GET)
+    public String dispatcherFunction(ModelMap modelMap){
+        modelMap.put("functionList",functionService.functionList(getLoginUser()));
+        modelMap.put("menuList",menuService.getMenuList(getLoginUser()));
+        return "function/dispatcher";
+    }
+
+    /**分配功能到指定目录下操作
+     *
+     * @return
+     */
+    @Before({LoginCheckInterceptor.class,PowerCheckInterceptor.class})
+    @RequestMapping(value = "/dispatcher",method = RequestMethod.POST)
+    @ResponseBody
+    public String dispatcherFunction(){
+        functionService.dispatcherFunction(getReqString("menuId"),getReqString("functionId"),getLoginUserName());
         return OPERSTOR_SUCCESS;
     }
 
@@ -92,14 +116,13 @@ public class FunctionController extends ContentController{
      *
      * @return
      */
-    @Before(LoginCheckInterceptor.class)
+    @Before({LoginCheckInterceptor.class,PowerCheckInterceptor.class})
     @RequestMapping(value = "/modify",method = RequestMethod.GET)
     public String modifyFunction(ModelMap modelMap){
         String funcitonId = getReqString("functionId");
         Function modifyFunction = functionService.findFunctionById(funcitonId);
 
         modelMap.put("modifyFunction",modifyFunction);
-        modelMap.put("menuList",menuService.getMenuList());
         return "function/modify";
     }
 
@@ -107,7 +130,7 @@ public class FunctionController extends ContentController{
      *
      * @return
      */
-    @Before({LoginCheckInterceptor.class,InputFunctionInterceptor.class})
+    @Before({LoginCheckInterceptor.class,PowerCheckInterceptor.class,InputFunctionInterceptor.class})
     @RequestMapping(value = "/modify",method = RequestMethod.POST)
     @ResponseBody
     public String modifyFunction(){
@@ -120,31 +143,14 @@ public class FunctionController extends ContentController{
      *
      * @return
      */
-    @Before(LoginCheckInterceptor.class)
+    @Before({LoginCheckInterceptor.class,PowerCheckInterceptor.class})
     @RequestMapping(value = "/delete",method = RequestMethod.POST)
     @ResponseBody
     public String removeFunction(){
+        System.out.println(getReqString("functionId"));
         functionService.removeFunction(getReqString("functionId"),getLoginUserName());
         return OPERSTOR_SUCCESS;
     }
 
-    /** 分配权限页面
-     *
-     * @return
-     */
-    @Before({LoginCheckInterceptor.class})
-    @RequestMapping(value = "/dispatcher",method = RequestMethod.GET)
-    public String dispatcherRole(ModelMap modelMap){
-        String roldId = getReqString("roleId");
-        Role role = roleService.getRole(roldId);
 
-        List<String> rolefunctionIds = new ArrayList<String>();//单独列出来role已有的权限ids
-        for(RolePower rolePower : role.getRolePowers()){
-            rolefunctionIds.add(rolePower.getFunctionId());
-        }
-
-        modelMap.put("role",role);
-        modelMap.put("functionList",functionService.functionList(getLoginUser()));
-        return "function/dispatcher";
-    }
 }

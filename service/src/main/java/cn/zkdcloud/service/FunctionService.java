@@ -2,10 +2,7 @@ package cn.zkdcloud.service;
 
 import cn.zkdcloud.entity.*;
 import cn.zkdcloud.exception.TipException;
-import cn.zkdcloud.repository.FunctionRepository;
-import cn.zkdcloud.repository.OperatorLogRepository;
-import cn.zkdcloud.repository.RolePowerRepository;
-import cn.zkdcloud.repository.RoleRepository;
+import cn.zkdcloud.repository.*;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -15,6 +12,8 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -39,7 +38,13 @@ public class FunctionService {
     RoleRepository roleRepository;
 
     @Autowired
-    RolePowerRepository rolePowerRepository;
+    RoleFunctionRepository roleFunctionRepository;
+
+    @Autowired
+    MenuFunctionRepository menuFunctionRepository;
+
+    @Autowired
+    MenuService menuService;
 
     /** 记录操作
      *
@@ -57,17 +62,15 @@ public class FunctionService {
 
     /** 添加功能
      *
-     * @param menuId
      * @param functionName
      * @param functionUrl
      * @param functionDescribe
      * @param functionSort
      */
-    public void addFunction(String menuId, String functionName, String functionUrl,
+    public void addFunction(String functionName, String functionUrl,
                             String functionDescribe, Integer functionSort, User user){
         try {
             Function function = new Function();
-            function.setMenuId(menuId);
             function.setFunctionName(functionName);
             function.setFunctionUrl(functionUrl);
             function.setFunctionDescribe(functionDescribe);
@@ -75,8 +78,8 @@ public class FunctionService {
 
             Function new_function = functionRepository.save(function);
 
-            Role role = roleRepository.findOne(user.getRoleId()); // 为更高权限的角色分配此功能
-            disGreeterRoleFunction(new_function.getFunctionId(),role.getRolePowerSize());
+            Role role = roleRepository.findOne(user.getRoleId());
+            disGreeterRoleFunction(new_function.getFunctionId(),role.getRolePowerSize());// 为更高权限的角色分配此功能
 
             recordLog(user.getUsername()+"增加功能"+functionName);
         } catch (Exception e) {
@@ -89,12 +92,12 @@ public class FunctionService {
      * @param rolePowerSize
      */
     public void disGreeterRoleFunction(String functionId,Integer rolePowerSize){
-        List<Role> roleList = roleRepository.morePowerThanThis(rolePowerSize);
+        List<Role> roleList = roleRepository.listRoleGreaterOrEqual(rolePowerSize);
         for(Role role : roleList){
-            RolePower rolePower = new RolePower();
+            RoleFunction rolePower = new RoleFunction();
             rolePower.setRoleId(role.getRoleId());
             rolePower.setFunctionId(functionId);
-            rolePowerRepository.save(rolePower);
+            roleFunctionRepository.save(rolePower);
         }
     }
     /** 移除功能
@@ -115,8 +118,10 @@ public class FunctionService {
      * @return
      */
     public List<Function> functionList(User user){
-        Sort sort = new Sort(Sort.Direction.ASC,"functionSort");
-        return functionRepository.findByRoleRoleId(user.getRoleId(),sort);
+        Role role = roleRepository.findOne(user.getRoleId());
+        List<Function> functionList = new ArrayList<Function>();
+        functionList.addAll(role.getFunctionSet());
+        return functionList;
     }
 
     /**带分页的功能列表
@@ -128,7 +133,11 @@ public class FunctionService {
     public Page<Function> functionPage(Integer page,Integer pageSize,User user){
 
         Pageable pageable = new PageRequest(page-1,pageSize,new Sort(Sort.Direction.ASC,"functionSort"));
-        return functionRepository.findByRoleRoleId(user.getRoleId(),pageable);
+        List<String> functionIds = new ArrayList<>();
+
+        for(Function function : roleRepository.getOne(user.getRoleId()).getFunctionSet()) //获取对应权限角色的ids
+            functionIds.add(function.getFunctionId());
+        return functionRepository.findByFunctionIdIn(functionIds,pageable);
     }
 
     /** 修改功能
@@ -149,7 +158,6 @@ public class FunctionService {
         function.setFunctionDescribe(functionDescribe);
         function.setFunctionSort(functionSort);
         function.setFunctionUrl(functionUrl);
-        function.setMenuId(menuId);
 
         Function oldFunciton = functionRepository.findOne(functionId);
         if(oldFunciton == null)
@@ -182,4 +190,26 @@ public class FunctionService {
             throw new TipException("无此功能");
         return functions.get(0);
     }
+
+    /**将功能分配到指定页面的操作
+     *
+     * @param menuId
+     * @param functionId
+     * @param username
+     */
+    public void dispatcherFunction(String menuId,String functionId,String username){
+        Menu menu = menuService.getMenu(menuId);
+        Function function = functionRepository.getOne(functionId);
+
+        if(menu == null || function == null)
+            throw new TipException("目录或指定功能不能为空");
+
+        MenuFunction menuFunction = new MenuFunction();
+        menuFunction.setFunctionId(functionId);
+        menuFunction.setMenuId(menuId);
+        menuFunctionRepository.save(menuFunction);
+
+        recordLog(username+"将"+function.getFunctionName()+"功能分配到"+menu.getMenuName()+"目录下");
+    }
+
 }

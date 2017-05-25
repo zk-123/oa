@@ -1,17 +1,12 @@
 package cn.zkdcloud.interceptors;
 
 import cn.zkdcloud.annotation.BeforeInterceptor;
-import cn.zkdcloud.entity.Role;
-import cn.zkdcloud.entity.RolePower;
 import cn.zkdcloud.entity.User;
 import cn.zkdcloud.exception.ErrorPageException;
 import cn.zkdcloud.exception.TipException;
 import cn.zkdcloud.service.FunctionService;
 import cn.zkdcloud.service.RolePowerService;
-import cn.zkdcloud.service.RoleService;
-import cn.zkdcloud.service.UserService;
 import cn.zkdcloud.util.Const;
-import net.sf.json.JSONObject;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;

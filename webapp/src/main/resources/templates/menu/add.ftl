@@ -116,7 +116,7 @@
             type:"POST",
             success:function (data) {
                 showTip(data);
-                window.location.reload(1000);
+                setTimeout("window.location.reload()",1500);
             },
             error:function (xr) {
                 showTip(xr.responseText);

@@ -78,7 +78,7 @@
                                         </div>
 
                                         <div class="menu-add-one">
-                                            角色权利（填写整数，数字越小，权利越大，谨慎填写）：
+                                            角色权限（填写整数，数字越小，权利越大，谨慎填写,您当前权限数字 ${myPowerSize}）：
                                             <input type="text" name="rolePowerSize" placeholder="角色权利" class="form-control" required>
                                         </div>
 

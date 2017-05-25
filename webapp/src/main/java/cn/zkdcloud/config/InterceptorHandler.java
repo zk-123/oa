@@ -5,7 +5,9 @@ import cn.zkdcloud.annotation.BeforeInterceptor;
 import cn.zkdcloud.entity.Function;
 import cn.zkdcloud.entity.Menu;
 import cn.zkdcloud.entity.MenuTree;
+import cn.zkdcloud.entity.User;
 import cn.zkdcloud.service.MenuService;
+import cn.zkdcloud.util.Const;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
@@ -57,7 +59,10 @@ public class InterceptorHandler implements HandlerInterceptor{
     public void postHandle(HttpServletRequest request, HttpServletResponse response, Object o, ModelAndView modelAndView) throws Exception {
         if(!(request.getHeader("x-requested-with") != null
                 && request.getHeader("x-requested-with").equalsIgnoreCase("XMLHttpRequest"))){
-            MenuTree menuTree  = menuService.menuTreeAll();
+            User user = (User) request.getSession().getAttribute(Const.USER_LOGIN);
+            if(user == null)
+                return;
+            MenuTree menuTree  = menuService.menuTree(user);
 
             if(!menuTree.getMenuTreeList().isEmpty()){ //搜索原url的位置
                 for(MenuTree mt : menuTree.getMenuTreeList()){
