@@ -88,6 +88,13 @@
                                             功能描述
                                             <input type="text" placeholder="简短的词语来描述该功能" name="functionDescribe" class="form-control">
                                         </div>
+                                        <div class="menu-add-one">
+                                            展示
+                                            <select name="display" class="form-control">
+                                                <option value="1">是</option>
+                                                <option value="0">否</option>
+                                            </select>
+                                        </div>
                                         <div class="tip"></div>
                                         <button class="btn btn-primary menu-add-submit">提交</button>
                                     </form>

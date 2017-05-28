@@ -68,17 +68,17 @@ public class FunctionService {
      * @param functionSort
      */
     public void addFunction(String functionName, String functionUrl,
-                            String functionDescribe, Integer functionSort, User user){
+                            String functionDescribe, Integer functionSort,Integer display, User user){
         try {
             Function function = new Function();
             function.setFunctionName(functionName);
             function.setFunctionUrl(functionUrl);
             function.setFunctionDescribe(functionDescribe);
             function.setFunctionSort(functionSort);
-
+            function.setDisplay(display > 0 ? true : false);
             Function new_function = functionRepository.save(function);
 
-            Role role = roleRepository.findOne(user.getRoleId());
+            Role role = user.getRole();
             disGreeterRoleFunction(new_function.getFunctionId(),role.getRolePowerSize());// 为更高权限的角色分配此功能
 
             recordLog(user.getUsername()+"增加功能"+functionName);
@@ -118,9 +118,11 @@ public class FunctionService {
      * @return
      */
     public List<Function> functionList(User user){
-        Role role = roleRepository.findOne(user.getRoleId());
+        Role role = user.getRole();
         List<Function> functionList = new ArrayList<Function>();
-        functionList.addAll(role.getFunctionSet());
+        for(RoleFunction roleFunction : role.getRoleFunctionSet())
+            functionList.add(functionRepository.findOne(roleFunction.getFunctionId()));
+
         return functionList;
     }
 
@@ -135,8 +137,8 @@ public class FunctionService {
         Pageable pageable = new PageRequest(page-1,pageSize,new Sort(Sort.Direction.ASC,"functionSort"));
         List<String> functionIds = new ArrayList<>();
 
-        for(Function function : roleRepository.getOne(user.getRoleId()).getFunctionSet()) //获取对应权限角色的ids
-            functionIds.add(function.getFunctionId());
+        for(RoleFunction roleFunction: user.getRole().getRoleFunctionSet()) //获取对应权限角色的ids
+            functionIds.add(roleFunction.getFunctionId());
         return functionRepository.findByFunctionIdIn(functionIds,pageable);
     }
 
@@ -147,17 +149,18 @@ public class FunctionService {
      * @param functionDescribe
      * @param functionSort
      * @param functionUrl
-     * @param menuId
+     * @param display
      * @param username
      */
     public void modifyFunction(String functionId,String functionName, String functionDescribe,
-                               Integer functionSort, String functionUrl,String menuId,String username){
+                               Integer functionSort, String functionUrl,Integer display,String username){
         Function function = new Function();
         function.setFunctionId(functionId);
         function.setFunctionName(functionName);
         function.setFunctionDescribe(functionDescribe);
         function.setFunctionSort(functionSort);
         function.setFunctionUrl(functionUrl);
+        function.setDisplay(display > 0 ? true : false);
 
         Function oldFunciton = functionRepository.findOne(functionId);
         if(oldFunciton == null)
@@ -212,4 +215,12 @@ public class FunctionService {
         recordLog(username+"将"+function.getFunctionName()+"功能分配到"+menu.getMenuName()+"目录下");
     }
 
+    /** 根据roleId返回不显示的功能
+     *
+     * @param roleId
+     * @return
+     */
+    public List<Function> undisplayFunctionsByRoleId(String roleId){
+        return functionRepository.findUndisplayByRoleId(roleId);
+    }
 }

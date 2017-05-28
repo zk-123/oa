@@ -6,7 +6,9 @@ import cn.zkdcloud.entity.Function;
 import cn.zkdcloud.entity.Menu;
 import cn.zkdcloud.entity.MenuTree;
 import cn.zkdcloud.entity.User;
+import cn.zkdcloud.exception.ErrorPageException;
 import cn.zkdcloud.service.MenuService;
+import cn.zkdcloud.service.UserService;
 import cn.zkdcloud.util.Const;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,6 +41,8 @@ public class InterceptorHandler implements HandlerInterceptor{
     @Autowired
     ApplicationContext applicationContext;
 
+    @Autowired
+    UserService userService;
 
     @Override
     public boolean preHandle(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, Object o) throws Exception {
@@ -59,8 +63,12 @@ public class InterceptorHandler implements HandlerInterceptor{
     public void postHandle(HttpServletRequest request, HttpServletResponse response, Object o, ModelAndView modelAndView) throws Exception {
         if(!(request.getHeader("x-requested-with") != null
                 && request.getHeader("x-requested-with").equalsIgnoreCase("XMLHttpRequest"))){
-            User user = (User) request.getSession().getAttribute(Const.USER_LOGIN);
-            if(user == null)
+            String uid = (String) request.getSession().getAttribute(Const.USER_LOGIN);
+            if(uid == null)
+                 throw new ErrorPageException("{\"page\":\"login\"}");
+
+            User user = userService.getUserByUid(uid);
+            if(user == null || user.getRole() == null)
                 return;
             MenuTree menuTree  = menuService.menuTree(user);
 
@@ -71,7 +79,9 @@ public class InterceptorHandler implements HandlerInterceptor{
             }
 
             modelAndView.addObject("menuTree",menuTree);
+            modelAndView.addObject("LOGIN_USER",user);
         }
+
     }
 
     @Override

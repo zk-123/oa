@@ -19,13 +19,13 @@ import javax.servlet.http.HttpServletResponse;
 public class LoginCheckInterceptor implements BeforeInterceptor {
     @Override
     public void doOperator(HttpServletRequest request, HttpServletResponse response) {
-        User user = (User) request.getSession().getAttribute(Const.USER_LOGIN);
+        String uid = (String) request.getSession().getAttribute(Const.USER_LOGIN);
         if((request.getHeader("x-requested-with") != null
                 && request.getHeader("x-requested-with").equalsIgnoreCase("XMLHttpRequest"))) { //ajax请求
-            if(user == null)
+            if(uid == null)
                 throw new TipException("请先登录");
         } else{
-            if(user == null)
+            if(uid == null)
                 throw new ErrorPageException("{\"page\":\"login\"}");
         }
     }

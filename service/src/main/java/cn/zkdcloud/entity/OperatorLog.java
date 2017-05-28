@@ -22,7 +22,7 @@ public class OperatorLog {
     @GenericGenerator(name="idGenerator", strategy="uuid")
     private String operatorLogId;
 
-    @Column
+    @Column(length = 2550)
     private String operatorContent;
 
     @Column

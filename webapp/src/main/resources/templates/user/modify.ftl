@@ -1,6 +1,6 @@
 <#include "../include/common-macro.ftl">
 <#include "../include/menu-tree-marco.ftl">
-<@main "编辑功能">
+<@main "编辑用户">
 <div class="main-container" id="main-container">
     <div class="main-container-inner">
         <a class="menu-toggler" id="menu-toggler" href="#">
@@ -54,7 +54,7 @@
                         <a href="${ctx}">首页</a>
                     </li>
                     <li>
-                        <a href="#">编辑功能</a>
+                        <a href="#">编辑用户</a>
                     </li>
                 </ul>
 
@@ -67,34 +67,33 @@
                             <div class="panel panel-primary menu-add">
                                 <div class="panel-heading">
                                     <div class="panel-title">
-                                        编辑功能
+                                        编辑用户
                                     </div>
                                 </div>
                                 <div class="panel-body">
                                     <form id="menu-modify">
-                                        <input type="hidden" name="functionId" value="${modifyFunction.functionId}">
+                                        <input type="hidden" name="uid" value="${modifyUser.uid}">
                                         <div class="menu-add-one">
-                                            功能名称：
-                                            <input type="text" placeholder="功能名称" value="${modifyFunction.functionName!""}" name="functionName" class="form-control" required>
-                                        </div>
-                                        <div class="menu-add-one">
-                                            功能Url
-                                            <input type="text" placeholder="请输入url" value="${modifyFunction.functionUrl!""}" name="functionUrl" class="form-control" required>
-                                        </div>
-                                        <div class="menu-add-one">
-                                            功能顺序(数字越小，优先级越高)
-                                            <input type="text" placeholder="请输入数字" value="${modifyFunction.functionSort!""}" name="functionSort" class="form-control" required>
-                                        </div>
-                                        <div class="menu-add-one">
-                                            功能描述
-                                            <input type="text" placeholder="简短的词语来描述该功能" value="${modifyFunction.functionDescribe!""}" name="functionDescribe" class="form-control" required>
-                                        </div>
-                                        <div class="menu-add-one">
-                                            展示
-                                            <select name="display" id="test" class="form-control">
-                                                <option value="1" ${modifyFunction.display?string("selected","")}> 是</option>
-                                                <option value="0" ${modifyFunction.display?string("","selected")}>否</option>
+                                            所属角色
+                                            <select name="roleId" class="form-control">
+                                                <#if modifyUser.role??>
+                                                    <#list roleList as role>
+                                                        <option value="${role.roleId}" <#if (role.roleId == modifyUser.role.roleId)>selected</#if> >${role.roleName}</option>
+                                                    </#list>
+                                                <#else>
+                                                    <#list roleList as role>
+                                                        <option value="${role.roleId}">${role.roleName}</option>
+                                                    </#list>
+                                                </#if>
                                             </select>
+                                        </div>
+                                        <div class="menu-add-one">
+                                            用户账号：
+                                            <input type="text" name="username" placeholder="人员账号" value="${modifyUser.username}" class="form-control" required>
+                                        </div>
+                                        <div class="menu-add-one">
+                                            用户密码（不设置，即为原密码）：
+                                            <input type="password" name="password" placeholder="人员密码"  class="form-control" required>
                                         </div>
                                         <div class="tip"></div>
                                         <button class="btn btn-primary menu-add-submit">提交</button>
@@ -114,12 +113,12 @@
 <script>
     $('.menu-add-submit').click(function () {
         $.ajax({
-            url:"${ctx}/function/modify",
+            url:"${ctx}/user/modify",
             data:$("#menu-modify").serialize(),
             type:"POST",
             success:function (data) {
                 showTip(data);
-                setTimeout("window.location.reload()",1500);
+                setTimeout("window.location.reload();",1500);
             },
             error:function (xr) {
                 showTip(xr.responseText);

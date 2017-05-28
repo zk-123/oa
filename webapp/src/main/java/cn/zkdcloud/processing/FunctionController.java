@@ -65,7 +65,7 @@ public class FunctionController extends ContentController{
     @ResponseBody
     public String addFunction(){
         functionService.addFunction(getReqString("functionName"),getReqString("functionUrl"),
-                getReqString("functionDescribe"), Integer.valueOf(getReqString("functionSort")),getLoginUser());
+                getReqString("functionDescribe"), Integer.valueOf(getReqString("functionSort")), Integer.valueOf(getReqString("display")),getLoginUser());
         return OPERSTOR_SUCCESS;
     }
 
@@ -135,7 +135,7 @@ public class FunctionController extends ContentController{
     @ResponseBody
     public String modifyFunction(){
         functionService.modifyFunction(getReqString("functionId"),getReqString("functionName"),getReqString("functionDescribe"),
-                Integer.parseInt(getReqString("functionSort")),getReqString("functionUrl"),getReqString("menuId"),getLoginUserName());
+                Integer.parseInt(getReqString("functionSort")),getReqString("functionUrl"), Integer.valueOf(getReqString("display")),getLoginUserName());
         return OPERSTOR_SUCCESS;
     }
 

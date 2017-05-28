@@ -6,6 +6,7 @@ import cn.zkdcloud.exception.ErrorPageException;
 import cn.zkdcloud.exception.TipException;
 import cn.zkdcloud.service.FunctionService;
 import cn.zkdcloud.service.RolePowerService;
+import cn.zkdcloud.service.UserService;
 import cn.zkdcloud.util.Const;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,9 +31,12 @@ public class PowerCheckInterceptor implements BeforeInterceptor{
     @Autowired
     RolePowerService rolePowerService;
 
+    @Autowired
+    UserService userService;
+
     @Override
     public void doOperator(HttpServletRequest request, HttpServletResponse response) {
-        User user = (User) request.getSession().getAttribute(Const.USER_LOGIN);
+        User user = userService.getUserByUid((String) request.getSession().getAttribute(Const.USER_LOGIN));
         String functionId = functionService.findFunctionByUrl(request.getRequestURI()).getFunctionId();
 
         if((request.getHeader("x-requested-with") != null
@@ -40,14 +44,14 @@ public class PowerCheckInterceptor implements BeforeInterceptor{
             if( user == null)
                 throw new TipException("请先登录");
 
-            String roldId = user.getRoleId();
+            String roldId = user.getRole().getRoleId();
             if(!rolePowerService.findByRoleIdAndFunctionId(roldId,functionId))
                 throw new TipException("权限不够");
         }else{
             if(user == null)
                 throw new ErrorPageException("{\"page\":\"login\"}");
 
-            String roldId = user.getRoleId();
+            String roldId = user.getRole().getRoleId();
             if(!rolePowerService.findByRoleIdAndFunctionId(roldId,functionId))
                 throw new TipException("权限不够");
         }

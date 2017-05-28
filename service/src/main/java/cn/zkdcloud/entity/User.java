@@ -4,6 +4,7 @@ package cn.zkdcloud.entity;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
+import java.util.Set;
 
 /**
  * @Author zk
@@ -30,16 +31,20 @@ public class User{
     @Column
     private String url;
 
-    @Column
-    private String roleId;
+    @ManyToOne()
+    @JoinTable(name = "RoleUser",joinColumns = @JoinColumn(name = "uid"),
+            inverseJoinColumns = @JoinColumn(name = "roleId"))
+    private Role role;
 
+    @OneToMany(cascade = CascadeType.ALL,mappedBy = "uid") //为了删除级联
+    private Set<RoleUser> roleUserSet;
 
-    public String getRoleId() {
-        return roleId;
+    public Role getRole() {
+        return role;
     }
 
-    public void setRoleId(String roleId) {
-        this.roleId = roleId;
+    public void setRole(Role role) {
+        this.role = role;
     }
 
     public String getEmail() {

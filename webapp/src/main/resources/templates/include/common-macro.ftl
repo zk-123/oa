@@ -33,36 +33,20 @@
                     <a data-toggle="dropdown" href="#" class="dropdown-toggle">
                         <span class="user-info">
 									<small>Welcome,</small>
-									Jason
+									<#if LOGIN_USER??>${LOGIN_USER.username}</#if>
 								</span>
 
                         <i class="icon-caret-down"></i>
                     </a>
+                </li>
+                <li class="light-orange">
+                    <a  href="${ctx}/user/off">
+                        <span class="user-info">
+                            <#if LOGIN_USER??>注销</#if>
+								</span>
 
-                    <ul class="user-menu pull-right dropdown-menu dropdown-yellow dropdown-caret dropdown-close">
-                        <li>
-                            <a href="#">
-                                <i class="icon-cog"></i>
-                                Settings
-                            </a>
-                        </li>
-
-                        <li>
-                            <a href="#">
-                                <i class="icon-user"></i>
-                                Profile
-                            </a>
-                        </li>
-
-                        <li class="divider"></li>
-
-                        <li>
-                            <a href="#">
-                                <i class="icon-off"></i>
-                                Logout
-                            </a>
-                        </li>
-                    </ul>
+                        <i class="icon-caret-down"></i>
+                    </a>
                 </li>
             </ul><!-- /.ace-nav -->
         </div><!-- /.navbar-header -->

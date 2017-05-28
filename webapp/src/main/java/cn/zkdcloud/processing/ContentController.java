@@ -1,7 +1,9 @@
 package cn.zkdcloud.processing;
 
 import cn.zkdcloud.entity.User;
+import cn.zkdcloud.service.UserService;
 import cn.zkdcloud.util.Const;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
 
@@ -21,6 +23,9 @@ public class ContentController {
     protected HttpServletRequest request;
     protected HttpServletResponse response;
     protected HttpSession session;
+
+    @Autowired
+    UserService userService;
 
     /** 初始化req,resp
      *
@@ -66,7 +71,7 @@ public class ContentController {
      * @return
      */
     public String getLoginUserName(){
-        User user = (User) session.getAttribute(Const.USER_LOGIN);
+        User user = userService.getUserByUid((String) session.getAttribute(Const.USER_LOGIN));
         return user.getUsername();
     }
 
@@ -75,7 +80,7 @@ public class ContentController {
      * @return
      */
     public User getLoginUser(){
-        return  (User) session.getAttribute(Const.USER_LOGIN);
+        return  userService.getUserByUid((String) session.getAttribute(Const.USER_LOGIN));
     }
 
     /** 判断是否登录

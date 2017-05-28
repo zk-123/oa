@@ -32,11 +32,23 @@ public class Function {
     @Column
     private String functionDescribe;
 
+    @Column
+    private boolean display;
+
     @OneToMany(cascade = CascadeType.ALL,mappedBy = "functionId") //级联
     private  Set<MenuFunction> menuFunctionSet;
 
     @OneToMany(cascade = CascadeType.ALL,mappedBy = "functionId")
     private Set<RoleFunction> roleFunctionSet;
+
+
+    public boolean isDisplay() {
+        return display;
+    }
+
+    public void setDisplay(boolean display) {
+        this.display = display;
+    }
 
     public Set<MenuFunction> getMenuFunctionSet() {
         return menuFunctionSet;

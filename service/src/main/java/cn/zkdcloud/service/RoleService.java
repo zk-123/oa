@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -150,19 +151,25 @@ public class RoleService {
     }
     /** 为指定用户分配权限操作
      *
-     * @param functionIds
      * @param roleId
      */
-    public void dispatcherRole(List<String> functionIds,List<String> menuIds,String roleId){
+    public void dispatcherRole(String[] functionIdAttr,String[] menuIdAttr,String roleId){
+        List<String> functionIds = new ArrayList<>();
+        List<String> menuIds = new ArrayList<>();
+        if(functionIdAttr != null)
+            Collections.addAll(functionIds,functionIdAttr);
+        if(menuIdAttr != null)
+            Collections.addAll(menuIds,menuIdAttr);
 
         List<String> oldFunctionIds = new ArrayList<>();
         List<String> oldMenuIds = new ArrayList<>();
+
         Role role = roleRepository.getOne(roleId);
 
-        for(Function function : role.getFunctionSet())
-            oldFunctionIds.add(function.getFunctionId());
-        for(Menu menu : role.getMenuSet())
-            oldMenuIds.add(menu.getMenuId());
+        for(RoleFunction roleFunction: role.getRoleFunctionSet())
+            oldFunctionIds.add(roleFunction.getFunctionId());
+        for(MenuRole menuRole : role.getMenuRoleSet())
+            oldMenuIds.add(menuRole.getMenuId());
 
         for(String functionId : oldFunctionIds){ //删除移除的功能
             if(!functionIds.contains(functionId)){

@@ -6,6 +6,7 @@ import cn.zkdcloud.entity.Role;
 import cn.zkdcloud.entity.User;
 import cn.zkdcloud.exception.TipException;
 import cn.zkdcloud.service.RoleService;
+import cn.zkdcloud.service.UserService;
 import cn.zkdcloud.util.Const;
 import cn.zkdcloud.util.StrUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,13 +26,16 @@ public class InputRoleInterceptor  implements BeforeInterceptor{
     @Autowired
     RoleService roleService;
 
+    @Autowired
+    UserService userService;
+
     @Override
     public void doOperator(HttpServletRequest request, HttpServletResponse response) {
-        User user = (User)request.getSession().getAttribute(Const.USER_LOGIN);
+        User user = userService.getUserByUid((String) request.getSession().getAttribute(Const.USER_LOGIN));
         String roleName = request.getParameter("roleName");
         String roleDescribe = request.getParameter("roleDescribe");
         String rolePowerSize = request.getParameter("rolePowerSize");
-        Role role = roleService.getRole(user.getRoleId());
+        Role role = roleService.getRole(user.getRole().getRoleId());
 
         if(StrUtil.isBlank(roleName) || StrUtil.notDigitAndLetterAndChinese(roleName))
             throw new TipException("角色名限定(数字,字母，汉字)");

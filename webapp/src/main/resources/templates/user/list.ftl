@@ -1,6 +1,6 @@
 <#include "../include/common-macro.ftl">
 <#include "../include/menu-tree-marco.ftl">
-<@main "功能列表">
+<@main "人员列表">
 <div class="main-container" id="main-container">
     <div class="main-container-inner">
         <a class="menu-toggler" id="menu-toggler" href="#">
@@ -54,7 +54,7 @@
                         <a href="${ctx}">首页</a>
                     </li>
                     <li>
-                        <a href="#">功能列表</a>
+                        <a href="#">人员列表</a>
                     </li>
                 </ul>
 
@@ -67,32 +67,26 @@
                         <div class="panel panel-primary">
                             <div class="panel-heading">
                                 <div class="panel-title">
-                                    功能列表
+                                    人员列表
                                 </div>
                             </div>
                             <div class="panel-body">
                                 <table class="table table-bordered">
                                     <tr>
                                         <td>序号</td>
-                                        <td>功能名称</td>
-                                        <td>功能描述</td>
-                                        <td>功能排序序号</td>
-                                        <td>功能访问Url</td>
-                                        <td>显示情况</td>
-                                        <td>修改</td>
-                                        <td>删除</td>
+                                        <td>人员名称</td>
+                                        <td>所属角色</td>
+                                        <td>操作/修改</td>
+                                        <td>操作/删除</td>
                                     </tr>
-                                    <#if functionPage??>
-                                        <#list functionPage.content as function>
+                                    <#if userPage??>
+                                        <#list userPage.content as user>
                                             <tr>
-                                                <td>${function_index+1}</td>
-                                                <td>${function.functionName}</td>
-                                                <td>${function.functionDescribe}</td>
-                                                <td>${function.functionSort}</td>
-                                                <td>${function.functionUrl}</td>
-                                                <td>${function.display?string("是","否")}</td>
-                                                <td><a href="${ctx}/function/modify?functionId=${function.functionId}">修改</a></td>
-                                                <td><a href="javascript:;" onclick="deleteTip('${function.functionId}')">删除</a></td>
+                                                <td>${user_index+1}</td>
+                                                <td>${user.username}</td>
+                                                <td><#if user.role??>${user.role.roleName}</#if></td>
+                                                <td><a href="${ctx}/user/modify?uid=${user.uid}">修改</a></td>
+                                                <td><a href="javascript:;" onclick="deleteTip('${user.uid}')">删除</a></td>
                                             </tr>
                                         </#list>
                                     </#if>
@@ -101,19 +95,19 @@
                                 <!--page-->
                                 <nav aria-label="Page navigation pull-right">
                                     <ul class="pagination">
-                                        <#if (functionPage?? && (curPage) > 1)>
+                                        <#if (userPage?? && (curPage) > 1)>
                                             <li>
-                                                <a href="${ctx}/function/list?p=${curPage - 1}" aria-label="Previous">
+                                                <a href="${ctx}/user/list?p=${curPage - 1}" aria-label="Previous">
                                                     <span aria-hidden="true">&laquo;</span>
                                                 </a>
                                             </li>
                                         </#if>
                                         <#if (sumPage > 0) >
-                                        <#list curPage..sumPage as index >
-                                            <#if (curPage + 9 > index)>
-                                                    <li <#if curPage == index> class="active" </#if>><a href="${ctx}/function/list?p=${index}">${index}</a></li>
-                                            </#if>
-                                        </#list>
+                                            <#list curPage..sumPage as index >
+                                                <#if (curPage + 9 > index)>
+                                                    <li <#if curPage == index> class="active" </#if>><a href="${ctx}/user/list?p=${index}">${index}</a></li>
+                                                </#if>
+                                            </#list>
                                         </#if>
                                         <#if (curPage + 9 <= sumPage)>
                                             <li>
@@ -121,7 +115,7 @@
                                                     ......
                                                 </a>
                                             </li><li>
-                                            <a href="${ctx}/function/list?p=${sumPage}" aria-label="Next">
+                                            <a href="${ctx}/user/list?p=${sumPage}" aria-label="Next">
                                                 <span aria-hidden="true">${sumPage}</span>
                                             </a>
                                         </li>
@@ -142,15 +136,15 @@
 
 <script>
     function deleteTip(data) {
-        if(window.confirm("确认删除该功能？")){
+        if(window.confirm("确认删除？")){
             $.ajax({
-                url:"${ctx}/function/delete",
-                data:{"functionId":data},
+                url:"${ctx}/user/delete",
+                data:{"uid":data},
                 async:false,
                 type:"POST",
                 success:function (data) {
-                    showTip(data);
-                    setTimeout("window.location.reload();",1500);
+                    setTimeout("showTip(data);",1500);
+                    window.location.reload();
                 },
                 error:function (ex) {
                     showTip(ex.responseText);

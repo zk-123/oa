@@ -4,6 +4,7 @@ import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
 import java.util.Date;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -31,20 +32,41 @@ public class Role {
     @Column
     private Date roleDate;
 
-    @ManyToMany(cascade = CascadeType.ALL)
-    @JoinTable(name = "RoleFunction",joinColumns = @JoinColumn(name = "roleId"), //该角色有哪些权限
-            inverseJoinColumns = @JoinColumn(name = "functionId"))
-    @OrderBy("functionSort asc ")
-    private Set<Function> functionSet;
+    @OneToMany(cascade = CascadeType.ALL,mappedBy = "roleId")
+    private Set<RoleUser> roleUserSet;
 
-    @ManyToMany(cascade = CascadeType.ALL)
-    @JoinTable(name = "MenuRole",joinColumns = @JoinColumn(name = "roleId"),
-    inverseJoinColumns = @JoinColumn(name = "menuId"))
-    @OrderBy("menuSort asc")
-    private Set<Menu> menuSet;
+    @OneToMany(cascade = CascadeType.ALL,mappedBy = "roleId")
+    private Set<RoleFunction>roleFunctionSet;
+
+    @OneToMany(cascade = CascadeType.ALL,mappedBy = "roleId")
+    private Set<MenuRole> menuRoleSet;
 
     public Integer getRolePowerSize() {
         return rolePowerSize;
+    }
+
+    public Set<RoleUser> getRoleUserSet() {
+        return roleUserSet;
+    }
+
+    public void setRoleUserSet(Set<RoleUser> roleUserSet) {
+        this.roleUserSet = roleUserSet;
+    }
+
+    public Set<RoleFunction> getRoleFunctionSet() {
+        return roleFunctionSet;
+    }
+
+    public void setRoleFunctionSet(Set<RoleFunction> roleFunctionSet) {
+        this.roleFunctionSet = roleFunctionSet;
+    }
+
+    public Set<MenuRole> getMenuRoleSet() {
+        return menuRoleSet;
+    }
+
+    public void setMenuRoleSet(Set<MenuRole> menuRoleSet) {
+        this.menuRoleSet = menuRoleSet;
     }
 
     public void setRolePowerSize(Integer rolePowerSize) {
@@ -83,21 +105,6 @@ public class Role {
         this.roleDescribe = roleDescribe;
     }
 
-    public Set<Function> getFunctionSet() {
-        return functionSet;
-    }
-
-    public void setFunctionSet(Set<Function> functionSet) {
-        this.functionSet = functionSet;
-    }
-
-    public Set<Menu> getMenuSet() {
-        return menuSet;
-    }
-
-    public void setMenuSet(Set<Menu> menuSet) {
-        this.menuSet = menuSet;
-    }
 
     @Override
     public String toString(){

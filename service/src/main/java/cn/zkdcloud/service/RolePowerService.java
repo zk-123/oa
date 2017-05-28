@@ -34,8 +34,8 @@ public class RolePowerService {
      * @return
      */
     public boolean findByRoleIdAndFunctionId(String roleId,String functionId){
-        List<RoleFunction> rolePowerList = roleFunctionRepository.findByRoleIdAndFunctionId(roleId,functionId);
-        if(rolePowerList == null || rolePowerList.isEmpty())
+        RoleFunction rolePower = roleFunctionRepository.findByRoleIdAndFunctionId(roleId,functionId);
+        if(rolePower == null)
             return false;
         else
             return true;

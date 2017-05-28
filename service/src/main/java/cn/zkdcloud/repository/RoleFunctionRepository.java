@@ -13,7 +13,7 @@ import java.util.List;
  */
 public interface RoleFunctionRepository extends JpaRepository<RoleFunction, String> {
 
-    List<RoleFunction> findByRoleIdAndFunctionId(String roleId, String functionId);
+    RoleFunction findByRoleIdAndFunctionId(String roleId, String functionId);
     void deleteByRoleId(String roldId);
 
     void deleteByRoleIdAndFunctionId(@Param("roleId")String roleId,@Param("functionId")String functionId);

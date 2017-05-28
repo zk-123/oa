@@ -1,10 +1,9 @@
 package cn.zkdcloud.processing;
 
 import cn.zkdcloud.annotation.Before;
-import cn.zkdcloud.entity.Function;
-import cn.zkdcloud.entity.Menu;
-import cn.zkdcloud.entity.Role;
+import cn.zkdcloud.entity.*;
 import cn.zkdcloud.interceptors.*;
+import cn.zkdcloud.service.FunctionService;
 import cn.zkdcloud.service.MenuService;
 import cn.zkdcloud.service.RoleService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,6 +33,9 @@ public class RoleController extends ContentController{
     @Autowired
     MenuService menuService;
 
+    @Autowired
+    FunctionService functionService;
+
     /** 添加角色页面
      *
      * @return
@@ -41,7 +43,7 @@ public class RoleController extends ContentController{
     @Before({LoginCheckInterceptor.class, PowerCheckInterceptor.class})
     @RequestMapping(value = "/add",method = RequestMethod.GET)
     public String addRolePage(ModelMap modelMap){
-        modelMap.put("myPowerSize",roleService.getRole(getLoginUser().getRoleId()).getRolePowerSize());
+        modelMap.put("myPowerSize",getLoginUser().getRole().getRolePowerSize());
         return "role/add";
     }
 
@@ -65,7 +67,7 @@ public class RoleController extends ContentController{
     @Before({LoginCheckInterceptor.class,PowerCheckInterceptor.class})
     @RequestMapping(value = "/modify",method = RequestMethod.GET)
     public String modifyPage(ModelMap modelMap){
-        modelMap.put("myPowerSize",roleService.getRole(getLoginUser().getRoleId()).getRolePowerSize());
+        modelMap.put("myPowerSize",getLoginUser().getRole().getRolePowerSize());
         modelMap.put("modifyRole",roleService.getRole(getReqString("roleId")));
         return "role/modify";
     }
@@ -93,7 +95,7 @@ public class RoleController extends ContentController{
         Integer curPage = getReqString("p") == null ? 1 : Integer.parseInt(getReqString("p"));
         Integer pageSize = getReqString("pageSize") == null ? 10 : Integer.parseInt(getReqString("pageSize"));
 
-        Page<Role> rolePage = roleService.listRolesPage(curPage,pageSize,roleService.getRole(getLoginUser().getRoleId()).getRolePowerSize());
+        Page<Role> rolePage = roleService.listRolesPage(curPage,pageSize,getLoginUser().getRole().getRolePowerSize());
         Integer sumPage = rolePage.getTotalPages();
         modelMap.put("sumPage",sumPage);
         modelMap.put("curPage",curPage);
@@ -125,15 +127,16 @@ public class RoleController extends ContentController{
 
         List<String> roleMenuIds = new ArrayList<>(); //所被分配角色的 menuIds,functionIds
         List<String> roleFunctionIds = new ArrayList<>();
-        for(Menu menu : role.getMenuSet())
-            roleMenuIds.add(menu.getMenuId());
-        for(Function function: role.getFunctionSet())
-            roleFunctionIds.add(function.getFunctionId());
+        for(MenuRole menuRole : role.getMenuRoleSet())
+            roleMenuIds.add(menuRole.getMenuId());
+        for(RoleFunction roleFunction: role.getRoleFunctionSet())
+            roleFunctionIds.add(roleFunction.getFunctionId());
 
         modelMap.put("roleMenuIds",roleMenuIds);
         modelMap.put("roleFunctionIds",roleFunctionIds);
+        modelMap.put("undisplayFunctions",functionService.undisplayFunctionsByRoleId(getLoginUser().getRole().getRoleId()));
         modelMap.put("role",role);
-        modelMap.put("menuTree",menuService.menuTree(getLoginUser()));
+        modelMap.put("menuTree",menuService.menuTree(getLoginUser())); //分配着的权限
         return "role/dispatcher";
     }
 
@@ -145,7 +148,7 @@ public class RoleController extends ContentController{
     @RequestMapping(value = "/dispatcher",method = RequestMethod.POST)
     @ResponseBody
     public String dispatcherRole(){
-        roleService.dispatcherRole(Arrays.asList((getReqStringValues("functionIds"))),Arrays.asList(getReqStringValues("menuIds")),getReqString("roleId"));
+        roleService.dispatcherRole(getReqStringValues("functionIds"),getReqStringValues("menuIds"),getReqString("roleId"));
         return OPERSTOR_SUCCESS;
     }
 }

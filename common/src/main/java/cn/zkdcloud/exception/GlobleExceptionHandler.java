@@ -61,4 +61,25 @@ public class GlobleExceptionHandler {
 
         return "error/error";
     }
+
+    /** 一般Runtime异常处理处
+     *
+     * @param request
+     * @param response
+     * @param ex
+     * @return
+     */
+    @ExceptionHandler(RuntimeException.class)
+    String runTimeExcetionPage(HttpServletRequest request, HttpServletResponse response,RuntimeException ex) throws IOException {
+        if((request.getHeader("x-requested-with") != null
+                && request.getHeader("x-requested-with").equalsIgnoreCase("XMLHttpRequest"))) { //ajax请求
+            response.setCharacterEncoding("UTF-8");
+            response.setStatus(500);
+            response.getWriter().print("不支持此功能");
+        } else{
+            request.setAttribute("tip","不支持此功能");
+            request.setAttribute("code",403);
+        }
+        return "error/error";
+    }
 }

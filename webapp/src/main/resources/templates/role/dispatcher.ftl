@@ -92,7 +92,16 @@
                                     <ul class="display-menu-ol">
                                         <@olMenuTree menuTree.menuTreeList></@olMenuTree>
                                     </ul>
+                                    <h5>未显示功能</h5>
+                                    <ul class="display-menu-ol">
+                                        <#if undisplayFunctions??>
+                                            <#list undisplayFunctions as function>
+                                                <li><input type="checkbox" name="functionIds" <#if roleFunctionIds?seq_contains(function.functionId)>checked</#if>  value="${function.functionId}">&nbsp;<span class="glyphicon glyphicon-link"></span>&nbsp;&nbsp;${function.functionName}</li>
+                                            </#list>
+                                        </#if>
+                                    </ul>
                                     <button class="btn btn-primary btn-submit">确认</button>
+
                                 </form>
                                 <div class="tip"></div>
                                 <!--page-->

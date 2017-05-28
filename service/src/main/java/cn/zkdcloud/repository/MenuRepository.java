@@ -23,4 +23,10 @@ public interface MenuRepository extends JpaRepository<Menu,String>{
     Page<Menu> findByMenuIdIn(List<String> list, Pageable pageable);
 
     List<Menu> findByMenuIdIn(List<String> list, Sort sort);
+
+    @Modifying
+    @Query("update Menu m set m.menuName = :menuName , m.menuSort = :menuSort , m.menuDescribe = :menuDescribe , m.parentId = :parentId " +
+            "where m.menuId = :menuId")
+    void modifyMenu(@Param("menuId")String menuId,@Param("menuName")String menuName,@Param("menuSort")Integer menuSort,
+                    @Param("menuDescribe")String menuDescribe,@Param("parentId")String parentId);
 }

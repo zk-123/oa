@@ -21,6 +21,10 @@ public interface FunctionRepository extends JpaRepository<Function,String>{
 
     Page<Function> findByFunctionIdIn(List<String> list, Pageable pageable);
 
-    @Query("select f from Function f where f.functionId in (select rp.functionId from RoleFunction rp where rp.roleId = :roleId)")
+    @Query("select f from Function f where f.functionId in (select rf.functionId from RoleFunction rf where rf.roleId = :roleId)")
     List<Function> findByRoleRoleId(@Param("roleId") String roleId,Sort sort);
+
+    @Query("select f from  Function f where f.functionId in (select rf.functionId from RoleFunction rf " +
+            "where rf.roleId = :roleId) and f.display = false")
+    List<Function> findUndisplayByRoleId(@Param("roleId")String roleId);
 }

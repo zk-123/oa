@@ -77,6 +77,7 @@
                                         <td>角色名称</td>
                                         <td>目录描述</td>
                                         <td>创建时间</td>
+                                        <td>角色权限数字</td>
                                         <td>操作/修改</td>
                                         <td>操作/删除</td>
                                         <td>分配权限</td>
@@ -88,6 +89,7 @@
                                                 <td>${role.roleName}</td>
                                                 <td>${role.roleDescribe}</td>
                                                 <td>${role.roleDate}</td>
+                                                <td>${role.rolePowerSize}</td>
                                                 <td><a target="_blank" href="${ctx}/role/modify?roleId=${role.roleId}">修改</a></td>
                                                 <td><a href="javascript:;" onclick="deleteTip('${role.roleId}')">删除</a></td>
                                                 <td><a target="_blank" href="${ctx}/role/dispatcher?roleId=${role.roleId}">分配权限</a></td>
