@@ -69,7 +69,7 @@ public class GlobleExceptionHandler {
      * @param ex
      * @return
      */
-    @ExceptionHandler(RuntimeException.class)
+    /*@ExceptionHandler(RuntimeException.class)
     String runTimeExcetionPage(HttpServletRequest request, HttpServletResponse response,RuntimeException ex) throws IOException {
         if((request.getHeader("x-requested-with") != null
                 && request.getHeader("x-requested-with").equalsIgnoreCase("XMLHttpRequest"))) { //ajax请求
@@ -81,5 +81,5 @@ public class GlobleExceptionHandler {
             request.setAttribute("code",403);
         }
         return "error/error";
-    }
+    }*/
 }

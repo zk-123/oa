@@ -1,13 +1,10 @@
 package cn.zkdcloud.entity;
 
 import org.hibernate.annotations.GenericGenerator;
-import org.springframework.data.annotation.Transient;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
+import javax.persistence.*;
 import java.util.List;
+import java.util.Set;
 
 /**  审批
  * @Author zk
@@ -33,6 +30,9 @@ public class Process {
 
     @Column(length = 2250)
     private String processRoles; //该字段是json数组json格式（step,roleId）
+
+    @OneToMany(cascade = CascadeType.ALL,mappedBy = "processId")
+    private Set<Flow> flowSet;
 
     @Transient
     private List<Role> roleList;

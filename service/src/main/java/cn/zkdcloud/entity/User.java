@@ -31,13 +31,16 @@ public class User{
     @Column
     private String url;
 
-    @ManyToOne()
+    @ManyToOne
     @JoinTable(name = "RoleUser",joinColumns = @JoinColumn(name = "uid"),
             inverseJoinColumns = @JoinColumn(name = "roleId"))
     private Role role;
 
     @OneToMany(cascade = CascadeType.ALL,mappedBy = "uid") //为了删除级联
     private Set<RoleUser> roleUserSet;
+
+    @OneToMany(cascade = CascadeType.ALL,mappedBy = "uid")
+    private Set<Flow> flowSet;
 
     public Role getRole() {
         return role;

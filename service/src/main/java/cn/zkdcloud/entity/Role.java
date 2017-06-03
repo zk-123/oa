@@ -41,6 +41,17 @@ public class Role {
     @OneToMany(cascade = CascadeType.ALL,mappedBy = "roleId")
     private Set<MenuRole> menuRoleSet;
 
+    @OneToMany(cascade = CascadeType.ALL,mappedBy = "roleId")
+    private Set<FlowStep> flowStepSet;
+
+    public Set<FlowStep> getFlowStepSet() {
+        return flowStepSet;
+    }
+
+    public void setFlowStepSet(Set<FlowStep> flowStepSet) {
+        this.flowStepSet = flowStepSet;
+    }
+
     public Integer getRolePowerSize() {
         return rolePowerSize;
     }

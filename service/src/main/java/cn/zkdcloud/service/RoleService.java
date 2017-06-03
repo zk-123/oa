@@ -149,6 +149,14 @@ public class RoleService {
     public List<Role> listRoleGreaterOrEqual(Integer rolePowerSize){
         return roleRepository.listRoleGreaterOrEqual(rolePowerSize);
     }
+
+    /**获取全部角色列表
+     *
+     * @return
+     */
+    public List<Role> listRoles(){
+        return roleRepository.findAll();
+    }
     /** 为指定用户分配权限操作
      *
      * @param roleId

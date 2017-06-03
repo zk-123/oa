@@ -1,6 +1,6 @@
 <#include "../include/common-macro.ftl">
 <#include "../include/menu-tree-marco.ftl">
-<@main "申请审批">
+<@main "添加流程">
 <div class="main-container" id="main-container">
     <div class="main-container-inner">
         <a class="menu-toggler" id="menu-toggler" href="#">
@@ -54,7 +54,7 @@
                         <a href="${ctx}">首页</a>
                     </li>
                     <li>
-                        <a href="#">申请审批</a>
+                        <a href="#">添加流程</a>
                     </li>
                 </ul>
 
@@ -67,41 +67,57 @@
                             <div class="panel panel-primary menu-add">
                                 <div class="panel-heading">
                                     <div class="panel-title">
-                                        申请审批
+                                        添加流程
                                     </div>
                                 </div>
                                 <div class="panel-body">
                                     <form id="function-new">
                                         <div class="menu-add-one">
-                                            1、选择流程：
-                                            <select name="processId" id="processId" class="form-control">
-                                                <option>请选择申请流程</option>
-                                                <#if processList??>
-                                                    <#list processList as process>
-                                                        <option value="${process.processId}">${process.processName}</option>
-                                                    </#list>
-                                                </#if>
-                                            </select>
+                                            流程名称：
+                                            <input type="text" placeholder="流程名称" name="processName" class="form-control">
                                         </div>
                                         <div class="menu-add-one">
-                                            2、点击<a id="processUrl" href="javascript:;">[下载模板]</a>
+                                            流程描述：
+                                            <input type="text" placeholder="流程描述" name="processDescribe" class="form-control">
                                         </div>
                                         <div class="menu-add-one">
-                                            3、上传写好的申请(请务必要将写好的申请，命名成：名字+日期)
-                                            <input type="hidden" id="flowUrl" name="flowUrl" value="">
+                                            上传模板
+                                            <input type="hidden" id="processUrl" name="processUrl" value="">
                                             <input type="file"  class="form-control" id="file">
                                         </div>
+                                        <div class="menu-add-one">
+                                            流转角色顺序<br/>
+                                            <div class="col-md-6">
+                                                <table class="table table-bordered already-select auto-sort">
+                                                    <tr>
+                                                        <td>序号</td>
+                                                        <td>已选</td>
+                                                        <td>移除</td>
+                                                    </tr>
+                                                </table>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <table class="table table-bordered auto-sort">
+                                                    <tr>
+                                                        <td>序号</td>
+                                                        <td>未选</td>
+                                                        <td>添加</td>
+                                                    </tr>
 
+                                                    <#if roleList??>
+                                                        <#list roleList as role>
+                                                        <tr>
+                                                            <td>${role_index+1}</td>
+                                                            <td>${role.roleName}</td>
+                                                            <td><a href="javascript:;" onclick="addRole('${role.roleId}','${role.roleName}')">添加</a></td>
+                                                        </tr>
+                                                        </#list>
+                                                    </#if>
+                                                </table>
+                                            </div>
+                                        </div>
                                         <div class="tip" style="clear: both"></div>
                                         <button class="btn btn-primary menu-add-submit" style="display: block;clear: both">提交</button>
-                                        <div style="margin: 28px 0 0 0">
-                                            <h5>注意事项</h5>
-                                            <ul>
-                                                <li>1、选择要申请的流程</li>
-                                                <li>2、下载申请模板</li>
-                                                <li>3、填写并命名好格式（名字+日期），然后上传</li>
-                                            </ul>
-                                        </div>
                                     </form>
                                 </div>
                             </div>
@@ -118,7 +134,7 @@
 <script>
     $('.menu-add-submit').click(function () {
         $.ajax({
-            url:"${ctx}/flow/add",
+            url:"${ctx}/process/add",
             data:$("#function-new").serialize(),
             type:"POST",
             success:function (data) {
@@ -132,6 +148,21 @@
         return false;
     })
 
+    function addRole(roleId,roleName) {
+        var len = $('.already-select tr').length;
+        $('.already-select').append("<tr><td>"+len+"</td><td>"+roleName+"</td>" +
+                "<td><a href='javascript:;' " +
+                "onclick='this.parentNode.parentNode.parentNode.removeChild(this.parentNode.parentNode);tableAutoSort()'>移除</a></td>" +
+                "<input type='hidden' name='roleIds' value='"+roleId+"'></tr>");
+    }
+    function tableAutoSort() {
+        $(".already-select").find("tr").each(function(index,element){
+            var tdArr = $(this).children();
+            if(index > 0){
+                tdArr.eq(0).text(index);
+            }
+        });
+    }
     $("#file").change(function () {
         var formDate = new FormData();
         formDate.append("file",$('#file')[0].files[0]);
@@ -143,22 +174,7 @@
             processData: false,
             contentType: false,
             success:function (data) {
-                $('#flowUrl').val(data);
-            }
-        })
-    })
-
-    $("#processId").change(function () {
-        $.ajax({
-            url:"${ctx}/flow/getUrl",
-            method:"POST",
-            data:{"processId":$('#processId').val()},
-            async:false,
-            success:function (data) {
-                $('#processUrl').attr("href",data);
-            },
-            error:function (xr) {
-                showTip(xr.responseText);
+                $('#processUrl').val(data);
             }
         })
     })
