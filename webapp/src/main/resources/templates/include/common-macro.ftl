@@ -21,7 +21,7 @@
             <a href="#" class="navbar-brand">
                 <small>
                     <i class="icon-leaf"></i>
-                    Ace Admin
+                    OA
                 </small>
             </a>
         </div>
@@ -29,6 +29,16 @@
         <div class="navbar-header pull-right" role="navigation">
             <ul class="nav ace-nav">
 
+                <#if (messageCount??&&(messageCount > 0))>
+                    <li class="light-orange">
+                        <a  href="${ctx}/message/my">
+                        <span class="user-info">
+                            未读消息:${messageCount}条
+                        </span>
+                            <i class="icon-caret-down"></i>
+                        </a>
+                    </li>
+                </#if>
                 <li class="light-blue">
                     <a data-toggle="dropdown" href="#" class="dropdown-toggle">
                         <span class="user-info">

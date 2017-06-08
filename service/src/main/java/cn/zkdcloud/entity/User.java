@@ -42,6 +42,33 @@ public class User{
     @OneToMany(cascade = CascadeType.ALL,mappedBy = "uid")
     private Set<Flow> flowSet;
 
+    @OneToMany(cascade = CascadeType.ALL,mappedBy = "uid")
+    private Set<Message> messages;
+
+    public Set<RoleUser> getRoleUserSet() {
+        return roleUserSet;
+    }
+
+    public void setRoleUserSet(Set<RoleUser> roleUserSet) {
+        this.roleUserSet = roleUserSet;
+    }
+
+    public Set<Flow> getFlowSet() {
+        return flowSet;
+    }
+
+    public void setFlowSet(Set<Flow> flowSet) {
+        this.flowSet = flowSet;
+    }
+
+    public Set<Message> getMessages() {
+        return messages;
+    }
+
+    public void setMessages(Set<Message> messages) {
+        this.messages = messages;
+    }
+
     public Role getRole() {
         return role;
     }

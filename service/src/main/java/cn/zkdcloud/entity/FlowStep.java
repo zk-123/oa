@@ -44,7 +44,7 @@ public class FlowStep {
     private String remarks;
 
     @Column
-    private Date FlowStepDate; //审批人审批时间
+    private Date flowStepDate; //审批人审批时间
 
     @Column
     private String dealUsername;
@@ -122,11 +122,11 @@ public class FlowStep {
     }
 
     public Date getFlowStepDate() {
-        return FlowStepDate;
+        return flowStepDate;
     }
 
     public void setFlowStepDate(Date flowStepDate) {
-        FlowStepDate = flowStepDate;
+        this.flowStepDate = flowStepDate;
     }
 
     public Role getRole() {
@@ -144,4 +144,5 @@ public class FlowStep {
     public void setAccept(boolean accept) {
         this.accept = accept;
     }
+
 }

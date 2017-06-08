@@ -8,6 +8,7 @@ import cn.zkdcloud.entity.MenuTree;
 import cn.zkdcloud.entity.User;
 import cn.zkdcloud.exception.ErrorPageException;
 import cn.zkdcloud.service.MenuService;
+import cn.zkdcloud.service.MessageService;
 import cn.zkdcloud.service.UserService;
 import cn.zkdcloud.util.Const;
 import org.apache.log4j.Logger;
@@ -44,6 +45,9 @@ public class InterceptorHandler implements HandlerInterceptor{
     @Autowired
     UserService userService;
 
+    @Autowired
+    MessageService messageService;
+
     @Override
     public boolean preHandle(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, Object o) throws Exception {
         HandlerMethod handlerMethod = (HandlerMethod) o;
@@ -77,7 +81,7 @@ public class InterceptorHandler implements HandlerInterceptor{
                     mt.setSpread(isSpread(request.getRequestURI(),mt));
                 }
             }
-
+            modelAndView.addObject("messageCount",messageService.getUnReadMessageByUid(uid));
             modelAndView.addObject("menuTree",menuTree);
             modelAndView.addObject("LOGIN_USER",user);
         }

@@ -1,6 +1,6 @@
 <#include "../include/common-macro.ftl">
 <#include "../include/menu-tree-marco.ftl">
-<@main "我的申请">
+<@main "我的消息">
 <div class="main-container" id="main-container">
     <div class="main-container-inner">
         <a class="menu-toggler" id="menu-toggler" href="#">
@@ -54,7 +54,7 @@
                         <a href="${ctx}">首页</a>
                     </li>
                     <li>
-                        <a href="#">我的申请</a>
+                        <a href="#">我的消息</a>
                     </li>
                 </ul>
 
@@ -67,44 +67,24 @@
                         <div class="panel panel-primary">
                             <div class="panel-heading">
                                 <div class="panel-title">
-                                    我的申请
+                                   我的消息
                                 </div>
                             </div>
                             <div class="panel-body">
                                 <table class="table table-bordered">
                                     <tr>
                                         <td>序号</td>
-                                        <td>申请主题</td>
-                                        <td>我提交的申请</td>
-                                        <td>状态</td>
-                                        <td>申请时间</td>
-                                        <td>详情</td>
+                                        <td>消息标题</td>
+                                        <td>时间</td>
+                                        <td>操作</td>
                                     </tr>
-                                    <#if flowPage??>
-                                        <#list flowPage.content as flow>
+                                    <#if messagePage??>
+                                        <#list messagePage.content as message>
                                             <tr>
-                                                <td>${flow_index+1}</td>
-                                                <td>${flow.process.processName!""}</td>
-                                                <td><a href="${flow.flowUrl!""}">点击下载</a></td>
-                                                <td>
-                                                    <#if flow.flowStepSet??>
-                                                        <#assign f = true />
-                                                        <#list flow.flowStepSet as flowStep>
-                                                        <#if !flowStep.status> <!--未审批状态-->
-                                                            ${flowStep.role.roleName}正在审批
-                                                            <#assign f = false/>
-                                                            <#break>
-                                                        <#elseif (flowStep.status && !flowStep.accept)><!--审批却没通过-->
-                                                            <p style="color: red">${flowStep.role.roleName}驳回</p>
-                                                            <#assign f = false/>
-                                                            <#break>
-                                                        </#if>
-                                                        </#list>
-                                                        <#if f><p style="color: #26ff23">同意审批</p></#if>
-                                                    </#if>
-                                                </td>
-                                                <td>${flow.flowDate!""}</td>
-                                                <td><a href="${ctx}/flow/detail?flowId=${flow.flowId}">详情</a></td>
+                                                <td>${message_index+1}</td>
+                                                <td><a href="${ctx}/message/detail?mid=${message.mid}">${message.messageTitle}</a></td>
+                                                <td>${message.messageDate}</td>
+                                                <td><#if message.messageStatus>已读<#else><a onclick="isRead('${message.mid}')">标记已读</a></#if></td>
                                             </tr>
                                         </#list>
                                     </#if>
@@ -113,19 +93,19 @@
                                 <!--page-->
                                 <nav aria-label="Page navigation pull-right">
                                     <ul class="pagination">
-                                        <#if (flowPage?? && (curPage) > 1)>
+                                        <#if (messagePage?? && (curPage) > 1)>
                                             <li>
-                                                <a href="${ctx}/flow/myApply?p=${curPage - 1}" aria-label="Previous">
+                                                <a href="${ctx}/message/my?p=${curPage - 1}" aria-label="Previous">
                                                     <span aria-hidden="true">&laquo;</span>
                                                 </a>
                                             </li>
                                         </#if>
                                         <#if (sumPage > 0) >
-                                            <#list curPage..sumPage as index >
-                                                <#if (curPage + 9 > index)>
-                                                    <li <#if curPage == index> class="active" </#if>><a href="${ctx}/flow/myApply?p=${index}">${index}</a></li>
-                                                </#if>
-                                            </#list>
+                                        <#list curPage..sumPage as index >
+                                            <#if (curPage + 9 > index)>
+                                                    <li <#if curPage == index> class="active" </#if>><a href="${ctx}/message/my?p=${index}">${index}</a></li>
+                                            </#if>
+                                        </#list>
                                         </#if>
                                         <#if (curPage + 9 <= sumPage)>
                                             <li>
@@ -133,7 +113,7 @@
                                                     ......
                                                 </a>
                                             </li><li>
-                                            <a href="${ctx}/flow/myApply?p=${sumPage}" aria-label="Next">
+                                            <a href="${ctx}/message/my?p=${sumPage}" aria-label="Next">
                                                 <span aria-hidden="true">${sumPage}</span>
                                             </a>
                                         </li>
@@ -153,21 +133,18 @@
 </@main>
 
 <script>
-    function deleteTip(data) {
-        if(window.confirm("确认删除？")){
-            $.ajax({
-                url:"${ctx}/process/delete",
-                data:{"processId":data},
-                async:false,
-                type:"POST",
-                success:function (data) {
-                    showTip(data);
-                    setTimeout("window.location.reload();",1500);
-                },
-                error:function (ex) {
-                    showTip(ex.responseText);
-                }
-            })
-        }
+    function isRead(data) {
+        $.ajax({
+            url:"${ctx}/message/read",
+            data:{"mid":data},
+            async:false,
+            type:"GET",
+            success:function (data) {
+                window.location.reload();
+            },
+            error:function (ex) {
+                showTip(ex.responseText);
+            }
+        })
     }
 </script>

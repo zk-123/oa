@@ -1,6 +1,6 @@
 <#include "../include/common-macro.ftl">
 <#include "../include/menu-tree-marco.ftl">
-<@main "申请审批">
+<@main "正在审批${flowStep.flow.user.username}提交的${flowStep.flow.process.processName}">
 <div class="main-container" id="main-container">
     <div class="main-container-inner">
         <a class="menu-toggler" id="menu-toggler" href="#">
@@ -54,7 +54,7 @@
                         <a href="${ctx}">首页</a>
                     </li>
                     <li>
-                        <a href="#">申请审批</a>
+                        <a href="#">审批申请</a>
                     </li>
                 </ul>
 
@@ -67,41 +67,58 @@
                             <div class="panel panel-primary menu-add">
                                 <div class="panel-heading">
                                     <div class="panel-title">
-                                        申请审批
+                                        审批申请
                                     </div>
                                 </div>
                                 <div class="panel-body">
                                     <form id="function-new">
-                                        <div class="menu-add-one">
-                                            1、选择流程：
-                                            <select name="processId" id="processId" class="form-control">
-                                                <option value="">请选择申请流程</option>
-                                                <#if processList??>
-                                                    <#list processList as process>
-                                                        <option value="${process.processId}">${process.processName}</option>
+                                        <input type="hidden" name="flowStepId" value="${flowStep.flowStepId}">
+                                        <table class="table table-bordered">
+                                            <tr>
+                                                <td>申请人</td>
+                                                <td>${flowStep.flow.user.username}</td>
+                                            </tr>
+                                            <tr>
+                                                <td>申请流程</td>
+                                                <td>${flowStep.flow.process.processName}</td>
+                                            </tr>
+                                            <tr>
+                                                <td>提交的申请信息</td>
+                                                <td><a href="${flowStep.flow.flowUrl}">[点击下载]</a></td>
+                                            </tr>
+                                            <tr>
+                                                <td>申请时间</td>
+                                                <td>${flowStep.flow.flowDate}</td>
+                                            </tr>
+                                            <tr>
+                                                <td>已走流程</td>
+                                                <td>
+                                                    <#list flowStep.flow.flowStepSet as fs>
+                                                        <#if !fs.status>
+                                                            <p style="color: #ccc">${fs.role.roleName}正在审批--></p>
+                                                            <#break>
+                                                        <#elseif (fs.status && !fs.accept)>
+                                                            <p style="color: red">${fs.flowStepDate} &nbsp;&nbsp;${fs.role.roleName}驳回--></p>
+                                                            <#break >
+                                                        <#else >
+                                                            <p style="color: #26ff23">${fs.flowStepDate} &nbsp;&nbsp;${fs.role.roleName}同意审批--></p>
+                                                        </#if>
                                                     </#list>
-                                                </#if>
-                                            </select>
+                                                </td>
+                                            </tr>
+                                        </table>
+                                        <div class="menu-add-one">
+                                            审批备注：
+                                            <textarea name="remarks" style="width: 100%;height: 200px" placeholder="写出意见或备注"></textarea>
                                         </div>
                                         <div class="menu-add-one">
-                                            2、点击<a id="processUrl" href="javascript:;">[下载模板]</a>
+                                            审批操作<br/>
+                                            同意 ：<input type="radio" name="accept" value="1"><br/>
+                                            驳回 : <input type="radio" name="accept" value="0">
                                         </div>
-                                        <div class="menu-add-one">
-                                            3、上传写好的申请(请务必要将写好的申请，命名成：名字+日期)
-                                            <input type="hidden" id="flowUrl" name="flowUrl" value="">
-                                            <input type="file"  class="form-control" id="file">
-                                        </div>
-
                                         <div class="tip" style="clear: both"></div>
                                         <button class="btn btn-primary menu-add-submit" style="display: block;clear: both">提交</button>
-                                        <div style="margin: 28px 0 0 0">
-                                            <h5>注意事项</h5>
-                                            <ul>
-                                                <li>1、选择要申请的流程</li>
-                                                <li>2、下载申请模板</li>
-                                                <li>3、填写并命名好格式（名字+日期），然后上传</li>
-                                            </ul>
-                                        </div>
+
                                     </form>
                                 </div>
                             </div>
@@ -117,58 +134,23 @@
 
 <script>
     $('.menu-add-submit').click(function () {
-
-        if($('#processId').val() == null || $('#processId').val() == ""){
-            showTip("请选择一个流程");
-            return false;
-        } else if($('#flowUrl').val() == null || $('#flowUrl').val() == ""){
-            showTip("请上传提交的内容");
+        if($("input[type='radio']:checked").val() == null){
+            showTip("选择批改操作");
             return false;
         }
 
         $.ajax({
-            url:"${ctx}/flow/add",
+            url:"${ctx}/flow/approve",
             data:$("#function-new").serialize(),
             type:"POST",
             success:function (data) {
                 showTip(data);
-                setTimeout("window.location.reload()",1500);
+                setTimeout("window.location.href='${ctx}/flow/myApprove'",1500);
             },
             error:function (xr) {
                 showTip(xr.responseText);
             }
         })
         return false;
-    })
-
-    $("#file").change(function () {
-        var formDate = new FormData();
-        formDate.append("file",$('#file')[0].files[0]);
-        $.ajax({
-            url:"http://upload.zkdcloud.cn",
-            data:formDate,
-            cache: false,
-            type:"POST",
-            processData: false,
-            contentType: false,
-            success:function (data) {
-                $('#flowUrl').val(data);
-            }
-        })
-    })
-
-    $("#processId").change(function () {
-        $.ajax({
-            url:"${ctx}/flow/getUrl",
-            method:"POST",
-            data:{"processId":$('#processId').val()},
-            async:false,
-            success:function (data) {
-                $('#processUrl').attr("href",data);
-            },
-            error:function (xr) {
-                showTip(xr.responseText);
-            }
-        })
     })
 </script>

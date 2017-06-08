@@ -78,33 +78,17 @@
                                         <td>申请文档</td>
                                         <td>申请人</td>
                                         <td>申请时间</td>
-                                        <td>进入批改页面</td>
+                                        <td>操作</td>
                                     </tr>
-                                    <#if flowPage??>
-                                        <#list flowPage.content as flow>
+                                    <#if flowStepPage??>
+                                        <#list flowStepPage.content as flowStep>
                                             <tr>
-                                                <td>${flow_index+1}</td>
-                                                <td>${flow.process.processName!""}</td>
-                                                <td><a href="${flow.flowUrl!""}">点击下载</a></td>
-                                                <td>
-                                                    <#if flow.flowStepSet??>
-                                                        <#assign f = true />
-                                                        <#list flow.flowStepSet as flowStep>
-                                                            <#if !flowStep.status> <!--未审批状态-->
-                                                            ${flowStep.role.roleName}正在审批
-                                                                <#assign f = false/>
-                                                                <#break>
-                                                                <#elseif (flowStep.status && !flowStep.accept)><!--审批却没通过-->
-                                                                <p style="color: red">${flowStep.role.roleName}驳回</p>
-                                                                <#assign f = false/>
-                                                                <#break>
-                                                            </#if>
-                                                        </#list>
-                                                        <#if f><p style="color: #26ff23">同意审批</p></#if>
-                                                    </#if>
-                                                </td>
-                                                <td>${flow.flowDate!""}</td>
-                                                <td><a>详情</a></td>
+                                                <td>${flowStep_index+1}</td>
+                                                <td>${flowStep.flow.process.processName!""}</td>
+                                                <td><a href="${flowStep.flow.flowUrl!""}">点击下载</a></td>
+                                                <td>${flowStep.flow.user.username}</td>
+                                                <td>${flowStep.flow.flowDate!""}</td>
+                                                <td><a href="${ctx}/flow/approve?flowStepId=${flowStep.flowStepId}">进入审批页面</a></td>
                                             </tr>
                                         </#list>
                                     </#if>
@@ -113,9 +97,9 @@
                                 <!--page-->
                                 <nav aria-label="Page navigation pull-right">
                                     <ul class="pagination">
-                                        <#if (flowPage?? && (curPage) > 1)>
+                                        <#if (flowStepPage?? && (curPage) > 1)>
                                             <li>
-                                                <a href="${ctx}/flow/myApply?p=${curPage - 1}" aria-label="Previous">
+                                                <a href="${ctx}/flow/myApprove?p=${curPage - 1}" aria-label="Previous">
                                                     <span aria-hidden="true">&laquo;</span>
                                                 </a>
                                             </li>
@@ -123,7 +107,7 @@
                                         <#if (sumPage > 0) >
                                             <#list curPage..sumPage as index >
                                                 <#if (curPage + 9 > index)>
-                                                    <li <#if curPage == index> class="active" </#if>><a href="${ctx}/flow/myApply?p=${index}">${index}</a></li>
+                                                    <li <#if curPage == index> class="active" </#if>><a href="${ctx}/flow/myApprove?p=${index}">${index}</a></li>
                                                 </#if>
                                             </#list>
                                         </#if>
@@ -133,7 +117,7 @@
                                                     ......
                                                 </a>
                                             </li><li>
-                                            <a href="${ctx}/flow/myApply?p=${sumPage}" aria-label="Next">
+                                            <a href="${ctx}/flow/myApprove?p=${sumPage}" aria-label="Next">
                                                 <span aria-hidden="true">${sumPage}</span>
                                             </a>
                                         </li>
