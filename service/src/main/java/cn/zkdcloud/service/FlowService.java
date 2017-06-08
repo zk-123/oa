@@ -45,7 +45,7 @@ public class FlowService {
 
     /**添加审批申请
      *
-     * @param uid
+     * @param user
      * @param processId
      * @param flowUrl
      */
@@ -120,7 +120,8 @@ public class FlowService {
     public void approve(String flowStepId,String remarks,boolean accept,String username){
         FlowStep flowStep = flowStepRepository.findOne(flowStepId);
         flowStepRepository.modifyApproveByFlowStepId(flowStepId,accept,remarks,username,new Date());//审批操作
-
+        messageService.add(flowStep.getFlow().getUid(),"申请的审批有新的进度",
+                username+"审批了你的申请，点击<a href='../flow/detail?flowId="+flowStep.getFlow().getFlowId()+"'>[这里查看进度]</a>"); //提醒申请者新的进度
         if(accept){
             Iterator<FlowStep> flowStepIterator = flowStep.getFlow().getFlowStepSet().iterator(); //将下一个步骤设为准备,做到这里，我已经后悔应该审批后再插入下一个步骤
             while(flowStepIterator.hasNext()){
