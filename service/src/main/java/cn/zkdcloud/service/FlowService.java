@@ -96,6 +96,19 @@ public class FlowService {
     public Page<FlowStep> flowStepPageByRoleId(Integer curPage,Integer pageSize,String roleId){
         Pageable pageable = new PageRequest(curPage-1,pageSize);
         return flowStepRepository.findByStatusFalseAndAcceptTrueAndRoleId(roleId,pageable);
+
+    }
+
+    /** 根据指定角色，获取已完成的审批
+     *
+     * @param curPage
+     * @param pageSize
+     * @param roleId
+     * @return
+     */
+    public Page<FlowStep> doneFlowStepPageByRoleId(Integer curPage,Integer pageSize,String roleId){
+        Pageable pageable = new PageRequest(curPage-1,pageSize);
+        return flowStepRepository.findByStatusTrueAndAcceptTrueAndRoleId(roleId,pageable);
     }
 
     /** 检查该角色是否能审批

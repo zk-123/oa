@@ -22,8 +22,6 @@ public class InputBaseUserInterceptor implements BeforeInterceptor{
 
         if(StrUtil.isBlank(username) || StrUtil.notDigitAndLetterAndChinese(username))
             throw new TipException("用户名仅限定于（字母，数字，中文）");
-        System.out.println(request.getRequestURI());
-        System.out.println(password);
         if(!(request.getRequestURI().equals("/user/modify") && (password == null || password.equals("")))){
             if(StrUtil.isBlank(password) || StrUtil.notDigitAndLetterAndChinese (password))
                 throw new TipException("密码仅限定于（字母，数字，中文）");

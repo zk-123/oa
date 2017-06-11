@@ -4,15 +4,14 @@ import cn.zkdcloud.annotation.Before;
 import cn.zkdcloud.entity.Function;
 import cn.zkdcloud.entity.Role;
 import cn.zkdcloud.entity.User;
-import cn.zkdcloud.interceptors.DispatcherPowerInterceptor;
-import cn.zkdcloud.interceptors.InputBaseUserInterceptor;
-import cn.zkdcloud.interceptors.LoginCheckInterceptor;
-import cn.zkdcloud.interceptors.PowerCheckInterceptor;
+import cn.zkdcloud.exception.TipException;
+import cn.zkdcloud.interceptors.*;
 import cn.zkdcloud.service.MenuService;
 import cn.zkdcloud.service.RoleService;
 import cn.zkdcloud.service.UserService;
 import cn.zkdcloud.util.Const;
 import cn.zkdcloud.util.Md5Util;
+import cn.zkdcloud.util.StrUtil;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -145,6 +144,47 @@ public class UserController extends ContentController{
     public String modifyUser(){
         userService.modifyUser(getReqString("uid"),getReqString("username"),getReqString("password"),
                 getReqString("roleId"),getLoginUserName());
+        return OPERSTOR_SUCCESS;
+    }
+
+    /** 个人设置页面
+     *
+     * @return
+     */
+    @Before({LoginCheckInterceptor.class})
+    @RequestMapping(value = "/personal",method = RequestMethod.GET)
+    public String personal(){
+        return "user/personal";
+    }
+
+    /**修改个人信息操作,有些特殊原因，必须在这里校验
+     *
+     * @return
+     */
+    @Before({LoginCheckInterceptor.class})
+    @RequestMapping(value = "/personal",method = RequestMethod.POST)
+    @ResponseBody
+    public String personalModify(){
+        User user = getLoginUser();
+
+        String username = getReqString("username");
+        String password = getReqString("password");
+        String new_password= getReqString("new_password");
+
+        if(StrUtil.isBlank(username) || StrUtil.notDigitAndLetterAndChinese(username))
+            throw new TipException("用户名仅限定于（字母，数字，中文）");
+
+        if(StrUtil.isBlank(password))
+            password = user.getPassword();
+        else if(!Md5Util.toMD5(password).equals(user.getPassword()))
+            throw new TipException("旧密码输入错误");
+        else if(StrUtil.isBlank(new_password) || StrUtil.notDigitAndLetterAndChinese(new_password))
+            throw new TipException("新密码仅限定于（字母，数字，中文）");
+        else
+            password = new_password;
+
+        userService.modifyPersonal(username,password,getReqString("email"),getReqString("url"),
+                user.getUid());
         return OPERSTOR_SUCCESS;
     }
 

@@ -28,7 +28,6 @@
 
         <div class="navbar-header pull-right" role="navigation">
             <ul class="nav ace-nav">
-
                 <#if (messageCount??&&(messageCount > 0))>
                     <li class="light-orange">
                         <a  href="${ctx}/message/my">
@@ -37,6 +36,12 @@
                         </span>
                             <i class="icon-caret-down"></i>
                         </a>
+                    </li>
+                </#if>
+                <#if (LOGIN_USER.url?? &&LOGIN_USER.url != "") >
+                    <li class="light-blue">
+							<img style="height: 40px;width: 40px" src="${LOGIN_USER.url}"/>
+                            <i class="icon-caret-down"></i>
                     </li>
                 </#if>
                 <li class="light-blue">

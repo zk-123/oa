@@ -110,6 +110,26 @@ public class FlowController extends ContentController{
         return "flow/myApprove";
     }
 
+    /** 该角色已完成的审批
+     *
+     * @param modelMap
+     * @return
+     */
+    @Before({LoginCheckInterceptor.class,PowerCheckInterceptor.class})
+    @RequestMapping(value = "/doneApprove",method = RequestMethod.GET)
+    public String doneApprove(ModelMap modelMap){
+        Role role = getLoginUser().getRole();
+        Integer curPage = getReqString("p") == null ? 1 : Integer.parseInt(getReqString("p"));
+        Integer pageSize = getReqString("pageSize") == null ? 10 : Integer.parseInt(getReqString("pageSize"));
+
+        Page<FlowStep> flowStepPage = flowService.doneFlowStepPageByRoleId(curPage,pageSize,role.getRoleId());
+        Integer sumPage = flowStepPage.getTotalPages();
+        modelMap.put("sumPage",sumPage);
+        modelMap.put("curPage",curPage);
+        modelMap.put("flowStepPage",flowStepPage);
+        return "flow/done";
+    }
+
     /** 审批页面
      *
      * @param modelMap

@@ -26,6 +26,14 @@ public interface FlowStepRepository extends JpaRepository<FlowStep,String>{
      */
     Page<FlowStep> findByStatusFalseAndAcceptTrueAndRoleId(String roleId, Pageable pageable);
 
+    /** 获取由该角色已完成的审批
+     *
+     * @param roleId
+     * @param pageable
+     * @return
+     */
+    Page<FlowStep> findByStatusTrueAndAcceptTrueAndRoleId(String roleId,Pageable pageable);
+
     /** 审批指定的申请(修改字段，状态status， 是否接受 accept, 备注 remarks, 处理人 dealUsername, 处理日期 flowStepDate )
      *
      * @param flowStepId

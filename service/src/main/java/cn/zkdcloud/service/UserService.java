@@ -164,4 +164,18 @@ public class UserService {
         Pageable pageable = new PageRequest(page-1,pageSize);
         return userRespository.getListUserByRoleLess(rolePowerSize,pageable);
     }
+
+    /** 修改个人信息
+     *
+     * @param username
+     * @param password
+     * @param email
+     * @param url
+     * @param uid
+     */
+    public void modifyPersonal(String username, String password,String email,String url,String uid){
+        User user = getUserByUid(uid);
+
+        userRespository.modifyUser(username,password,email,url,uid);
+    }
 }
